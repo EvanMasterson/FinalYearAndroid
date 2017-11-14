@@ -16,6 +16,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".SignUpActivity" />
+        <activity android:name=".PasswordResetActivity" />
+        <activity android:name=".MainActivity" />
+        <activity android:name=".GeofenceActivity" />
+        <activity android:name=".ExtraInfoActivity"></activity>
     </application>
 
 </manifest>

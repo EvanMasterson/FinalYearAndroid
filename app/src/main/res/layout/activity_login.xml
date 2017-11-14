@@ -7,7 +7,7 @@
     tools:context="emasterson.finalyearandroid.LoginActivity">
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/emailET"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -26,7 +26,7 @@
         app:layout_constraintVertical_bias="0.113" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/passwordET"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
