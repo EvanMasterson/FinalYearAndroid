@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">FinalYearAndroid</string>
+    <string name="loginBtn">Login</string>
+    <string name="emailTV">Email:</string>
+    <string name="passwordTV">Password:</string>
+    <string name="emailHint">Enter email here</string>
+    <string name="passwordHint">Enter password here</string>
+    <string name="forgotPasswordTV">Forgot Password? \nClick here to reset</string>
+    <string name="signupTV">Don\'t have an account? \nSign Up here!</string>
+</resources>
