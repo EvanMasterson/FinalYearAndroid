@@ -7,4 +7,5 @@
     <string name="passwordHint">Enter password here</string>
     <string name="forgotPasswordTV">Forgot Password? \nClick here to reset</string>
     <string name="signupTV">Don\'t have an account? \nSign Up here!</string>
+    <string name="loading">Loading…</string>
 </resources>
