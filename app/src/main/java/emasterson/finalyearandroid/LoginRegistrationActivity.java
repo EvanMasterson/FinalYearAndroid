@@ -21,7 +21,7 @@ import com.google.firebase.auth.FirebaseUser;
 /*
     @Reference https://github.com/firebase/quickstart-android/tree/master/auth
  */
-public class LoginActivity extends AppCompatActivity {
+public class LoginRegistrationActivity extends AppCompatActivity {
 
     private Button loginBtn;
     private TextView forgotPasswordTV;
@@ -34,7 +34,8 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_login_registration);
+
         loginBtn = findViewById(R.id.loginBtn);
         forgotPasswordTV = findViewById(R.id.forgotPasswordTV);
         signupTV = findViewById(R.id.signupTV);
@@ -50,19 +51,17 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        forgotPasswordTV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), PasswordResetActivity.class);
-                startActivity(i);
-            }
-        });
-
         signupTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), SignUpActivity.class);
-                startActivity(i);
+                createAccount(emailET.getText().toString(), passwordET.getText().toString());
+            }
+        });
+
+        forgotPasswordTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetPassword(emailET.getText().toString());
             }
         });
     }
@@ -75,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void signIn(String email, String password) {
-        if (!validateForm()) {
+        if (!validateEmail() && !validatePassword()) {
             return;
         }
         showProgressDialog();
@@ -87,8 +86,7 @@ public class LoginActivity extends AppCompatActivity {
                             FirebaseUser currentUser = auth.getCurrentUser();
                             confirmUser(currentUser);
                         } else {
-                            Toast.makeText(getApplicationContext(), "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
                             confirmUser(null);
                         }
                         hideProgressDialog();
@@ -96,7 +94,48 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    private boolean validateForm() {
+    private void createAccount(String email, String password) {
+        if (!validateEmail() && !validatePassword()) {
+            return;
+        }
+        showProgressDialog();
+
+        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser currentUser = auth.getCurrentUser();
+                            confirmUser(currentUser);
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            confirmUser(null);
+                        }
+                        hideProgressDialog();
+                    }
+                });
+    }
+
+    private void resetPassword(final String email){
+        if (!validateEmail()) {
+            return;
+        }
+        showProgressDialog();
+
+        auth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Toast.makeText(getApplicationContext(), "Email sent...", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "User:" + email + " does not exist.", Toast.LENGTH_LONG).show();
+                }
+                hideProgressDialog();
+            }
+        });
+    }
+
+    //TODO Proper email validation
+    private boolean validateEmail() {
         boolean valid = true;
 
         String email = emailET.getText().toString();
@@ -106,6 +145,12 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             emailET.setError(null);
         }
+        return valid;
+    }
+
+    //TODO Proper password validation
+    private boolean validatePassword() {
+        boolean valid = true;
 
         String password = passwordET.getText().toString();
         if (TextUtils.isEmpty(password)) {
@@ -114,7 +159,6 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             passwordET.setError(null);
         }
-
         return valid;
     }
 
