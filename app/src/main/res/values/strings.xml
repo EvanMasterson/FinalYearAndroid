@@ -8,4 +8,6 @@
     <string name="forgotPasswordTV">Forgot Password? \nClick here to reset</string>
     <string name="signupTV">Don\'t have an account? \nSign Up here!</string>
     <string name="loading">Loading…</string>
+    <string name="menu_logout">Logout</string>
+    <string name="menu_profile">Profile</string>
 </resources>

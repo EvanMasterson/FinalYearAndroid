@@ -19,7 +19,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 /*
-    @Reference https://github.com/firebase/quickstart-android/tree/master/auth
+    @Reference
+    https://github.com/firebase/quickstart-android/tree/master/auth
+    https://firebase.google.com/docs/auth/android/password-auth?authuser=0
  */
 public class LoginRegistrationActivity extends AppCompatActivity {
 
