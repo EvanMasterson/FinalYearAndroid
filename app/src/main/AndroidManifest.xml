@@ -23,22 +23,24 @@
             android:name=".GeofenceActivity"
             android:parentActivityName=".MainActivity">
             <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".MainActivity"/>
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
         <activity
             android:name=".ExtraInfoActivity"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>>
+                android:value=".MainActivity" />
         </activity>
         <activity
             android:name=".ProfileActivity"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>></activity>
+                android:value=".MainActivity" />
+        </activity>
+        <activity android:name=".BaseActivity"></activity>
     </application>
 
 </manifest>
