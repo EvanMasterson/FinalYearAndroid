@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">FinalYearAndroid</string>
+    <string name="title_login">Login</string>
+    <string name="title_home">Home</string>
+    <string name="title_profile">User Profile</string>
+    <string name="title_geofence">Geofences</string>
+    <string name="title_extra_info">Extra Info</string>
     <string name="loginBtn">Login</string>
     <string name="emailTV">Email:</string>
     <string name="passwordTV">Password:</string>
@@ -10,4 +15,6 @@
     <string name="loading">Loading…</string>
     <string name="menu_logout">Logout</string>
     <string name="menu_profile">Profile</string>
+    <string name="extra_info_button">View Extra Info</string>
+    <string name="geofence_button">View/Edit Geofences</string>
 </resources>
