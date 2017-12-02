@@ -37,6 +37,7 @@ public class LoginRegistrationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_registration);
+        getSupportActionBar().setTitle(R.string.title_login);
 
         loginBtn = findViewById(R.id.loginBtn);
         forgotPasswordTV = findViewById(R.id.forgotPasswordTV);
