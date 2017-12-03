@@ -80,7 +80,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback{
                     LatLng watch = new LatLng(latitude, longitude);
                     gMap.clear();
                     gMap.addMarker(new MarkerOptions().position(watch).title("Current Watch Location"));
-                    gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(watch, 15.0f));
+                    gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(watch, 16.0f));
                 }
             }
 
