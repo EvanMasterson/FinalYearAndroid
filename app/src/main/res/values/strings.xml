@@ -25,4 +25,9 @@
     <string name="saveBtn">Save</string>
     <string name="updateProfileTV">Update Your Profile!</string>
     <string name="changePasswordTV">Change Password?</string>
+    <string-array name="spinner">
+        <item>Heart Rate</item>
+        <item>Steps</item>
+        <item>Sleep</item>
+    </string-array>
 </resources>
