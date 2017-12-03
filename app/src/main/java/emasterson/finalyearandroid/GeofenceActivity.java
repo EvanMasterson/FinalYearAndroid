@@ -49,15 +49,16 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
                 // whenever data at this location is updated.
                 GenericTypeIndicator<HashMap<String, Object>> objectsGTypeInd = new GenericTypeIndicator<HashMap<String, Object>>() {};
                 Map<String, Object> objectHashMap = dataSnapshot.getValue(objectsGTypeInd);
-                ArrayList<Object> objectArrayList = new ArrayList(objectHashMap.values());
+                if(objectHashMap != null) {
+                    ArrayList<Object> objectArrayList = new ArrayList(objectHashMap.values());
+                    latitude = Double.parseDouble(objectArrayList.get(0).toString());
+                    longitude = Double.parseDouble(objectArrayList.get(1).toString());
 
-                latitude = Double.parseDouble(objectArrayList.get(0).toString());
-                longitude = Double.parseDouble(objectArrayList.get(1).toString());
-
-                LatLng watch = new LatLng(latitude, longitude);
-                gMap.clear();
-                gMap.addMarker(new MarkerOptions().position(watch).title("Current Watch Location"));
-                gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(watch, 15.0f));
+                    LatLng watch = new LatLng(latitude, longitude);
+                    gMap.clear();
+                    gMap.addMarker(new MarkerOptions().position(watch).title("Current Watch Location"));
+                    gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(watch, 15.0f));
+                }
             }
 
             @Override

@@ -3,8 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menu_profile"
-        android:title="@string/menu_profile" />
+        android:id="@+id/menu_user_profile"
+        android:title="@string/title_profile" />
+    <item
+        android:id="@+id/menu_patient_profile"
+        android:title="@string/title_patient_profile" />
     <item
         android:id="@+id/menu_logout"
         android:title="@string/menu_logout" />

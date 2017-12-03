@@ -34,8 +34,12 @@ public class BaseActivity extends AppCompatActivity {
             case R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
-            case R.id.menu_profile:
-                Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+            case R.id.menu_patient_profile:
+                Intent patientProfileIntent = new Intent(getApplicationContext(), PatientProfileActivity.class);
+                startActivity(patientProfileIntent);
+                return true;
+            case R.id.menu_user_profile:
+                Intent profileIntent = new Intent(getApplicationContext(), UserProfileActivity.class);
                 startActivity(profileIntent);
                 return true;
             case R.id.menu_logout:

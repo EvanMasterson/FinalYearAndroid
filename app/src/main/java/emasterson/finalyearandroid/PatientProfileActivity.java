@@ -1,14 +1,13 @@
 package emasterson.finalyearandroid;
 
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class ProfileActivity extends BaseActivity {
+public class PatientProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setContentView(R.layout.activity_patient_profile);
     }
 }
