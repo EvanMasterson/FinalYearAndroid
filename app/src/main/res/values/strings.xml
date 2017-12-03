@@ -5,16 +5,24 @@
     <string name="title_profile">User Profile</string>
     <string name="title_geofence">Geofences</string>
     <string name="title_extra_info">Extra Info</string>
+    <string name="title_patient_profile">Patient Profile</string>
     <string name="loginBtn">Login</string>
     <string name="emailTV">Email:</string>
     <string name="passwordTV">Password:</string>
     <string name="emailHint">Enter email here</string>
-    <string name="passwordHint">Enter password here</string>
+    <string name="passwordHint">Enter current password here</string>
     <string name="forgotPasswordTV">Forgot Password? \nClick here to reset</string>
     <string name="signupTV">Don\'t have an account? \nSign Up here!</string>
     <string name="loading">Loading…</string>
     <string name="menu_logout">Logout</string>
-    <string name="menu_profile">Profile</string>
     <string name="extra_info_button">View Extra Info</string>
     <string name="geofence_button">View/Edit Geofences</string>
+    <string name="firstNameHint">Enter first name here</string>
+    <string name="lastNameHint">Enter last name here</string>
+    <string name="phoneHint">Enter phone number here</string>
+    <string name="newPasswordHint">Enter new password here</string>
+    <string name="repeatNewPasswordHint">Repeat new password here</string>
+    <string name="saveBtn">Save</string>
+    <string name="updateProfileTV">Update Your Profile!</string>
+    <string name="changePasswordTV">Change Password?</string>
 </resources>
