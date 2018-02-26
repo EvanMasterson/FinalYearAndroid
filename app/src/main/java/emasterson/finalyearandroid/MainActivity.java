@@ -12,6 +12,7 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,6 +28,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback{
     private Button geofenceBtn, extraInfoBtn;
     private Double latitude, longitude;
     private GoogleMap gMap;
+    private FirebaseAuth auth;
     private FirebaseDatabase database;
     private DatabaseReference dbRef;
 
@@ -35,8 +37,9 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
-        dbRef = database.getReference().child("location");
+        dbRef = database.getReference().child(auth.getCurrentUser().getUid());
 
         geofenceBtn = findViewById(R.id.geofenceBtn);
         extraInfoBtn = findViewById(R.id.extraInfoBtn);
