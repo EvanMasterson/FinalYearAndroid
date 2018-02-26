@@ -6,6 +6,10 @@
     android:layout_height="match_parent"
     tools:context="emasterson.finalyearandroid.GeofenceActivity">
 
+    <include
+        android:id="@+id/geofence_settings_layout"
+        layout="@layout/geofence_settings_dialog" />
+
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.google.android.gms.maps.MapFragment"
