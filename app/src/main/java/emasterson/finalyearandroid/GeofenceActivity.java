@@ -10,10 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -32,15 +29,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnPolygonClickListener, AdapterView.OnItemSelectedListener{
-    private Double latitude, longitude;
+    private Double latitude, longitude, zoneLatitude, zoneLongitude;
     private GoogleMap gMap;
     private FirebaseAuth auth;
     private FirebaseDatabase database;
@@ -51,6 +48,7 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
     private Polyline polyline;
     private Polygon polygon;
     private ArrayList<LatLng> listGeofencePoints = new ArrayList<>();
+    private ArrayList<LatLng> zoneListPoints = new ArrayList<>();
     private ArrayList<Polyline> polylineList = new ArrayList<>();
     private ArrayList<Polygon> polygonList = new ArrayList<>();
     private View view;
@@ -103,17 +101,37 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                GenericTypeIndicator<HashMap<String, Object>> objectsGTypeInd = new GenericTypeIndicator<HashMap<String, Object>>() {};
-                Map<String, Object> objectHashMap = dataSnapshot.getValue(objectsGTypeInd);
-                if(objectHashMap != null) {
-                    ArrayList<Object> objectArrayList = new ArrayList(objectHashMap.values());
-                    latitude = Double.parseDouble(objectArrayList.get(0).toString());
-                    longitude = Double.parseDouble(objectArrayList.get(1).toString());
-
-                    watch = new LatLng(latitude, longitude);
-                    gMap.clear();
-                    gMap.addMarker(new MarkerOptions().position(watch).title("Current Watch Location"));
-                    gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(watch, 16.0f));
+                for(DataSnapshot data : dataSnapshot.getChildren()){
+                    System.out.println(data.getKey());
+                    if(data.getKey().equals("latitude")){
+                        latitude = Double.parseDouble(data.getValue().toString());
+                    }
+                    if(data.getKey().equals("longitude")){
+                        longitude = Double.parseDouble(data.getValue().toString());
+                    }
+                    if(latitude != null && longitude != null) {
+                        watch = new LatLng(latitude, longitude);
+                        gMap.clear();
+                        gMap.addMarker(new MarkerOptions().position(watch).title("Current Watch Location"));
+                        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(watch, 16.0f));
+                    }
+                    if(data.getKey().equals("zones")){
+                        for(DataSnapshot zones : data.getChildren()){
+                            try {
+                                JSONArray jsonArray = new JSONArray(zones.getValue().toString());
+                                for(int i=0; i<jsonArray.length(); i++){
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    zoneLatitude = Double.parseDouble(jsonObject.getString("latitude"));
+                                    zoneLongitude = Double.parseDouble(jsonObject.getString("longitude"));
+                                    LatLng point = new LatLng(zoneLatitude, zoneLongitude);
+                                    zoneListPoints.add(point);
+                                }
+                                createExistingPolygon();
+                            } catch(Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
                 }
             }
 
@@ -133,7 +151,7 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
         gMap.addMarker(new MarkerOptions().position(point).title(point.toString()));
 
         if(listGeofencePoints.size() > 1){
-            polylineOptions = new PolylineOptions().color(Color.BLUE);
+            PolylineOptions polylineOptions = new PolylineOptions().color(Color.BLUE);
             polylineOptions.add(point);
             previousPoint = listGeofencePoints.get(listGeofencePoints.size() - 2);
             polylineOptions.add(previousPoint);
@@ -178,10 +196,10 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
             @Override
             public void onClick(DialogInterface dialog, int which) {
 //                view.setVisibility(View.INVISIBLE);
-                System.out.println(zoneColour);
                 ((ViewGroup) view.getParent()).removeView(view);
                 reDrawPolygon(polygon, zoneColour);
                 dialog.dismiss();
+                savePolygon();
             }
         });
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -204,18 +222,18 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
         } else if(zoneColour.equals("Red")){
             fillColor = 0x50ff0000;
         }
-        polygonOptions = new PolygonOptions();
+        PolygonOptions polygonOptions = new PolygonOptions();
         polygonOptions.addAll(polygon.getPoints());
         polygonOptions.strokeColor(Color.BLUE);
         polygonOptions.fillColor(fillColor);
         polygonOptions.strokeWidth(7);
-        polygon = gMap.addPolygon(polygonOptions);
+        Polygon polygon = gMap.addPolygon(polygonOptions);
         polygon.setClickable(true);
         polygonList.add(polygon);
     }
 
     public void reDrawPolylines(){
-        polylineOptions = new PolylineOptions().color(Color.BLUE);
+        PolylineOptions polylineOptions = new PolylineOptions().color(Color.BLUE);
 
         for(Polyline line : polylineList){
             line.remove();
@@ -229,7 +247,7 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     public void createPolygon() {
-        polygonOptions = new PolygonOptions();
+        PolygonOptions polygonOptions = new PolygonOptions();
         polygonOptions.addAll(listGeofencePoints);
         polygonOptions.strokeColor(Color.BLUE);
         polygonOptions.fillColor(0x5000ff00);
@@ -239,7 +257,20 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
         polygonList.add(polygon);
     }
 
-    public void savePolygon(){
+    public void createExistingPolygon(){
+        PolygonOptions polygonOptions = new PolygonOptions();
+        polygonOptions.addAll(zoneListPoints);
+        polygonOptions.strokeColor(Color.BLUE);
+        polygonOptions.fillColor(0x5000ff00);
+        polygonOptions.strokeWidth(7);
+        polygon = gMap.addPolygon(polygonOptions);
+        polygon.setClickable(true);
+        polygonList.add(polygon);
+        zoneListPoints.clear();
+    }
 
+    public void savePolygon(){
+        dbRef.child("zones").push().setValue(listGeofencePoints);
+        listGeofencePoints.clear();
     }
 }
