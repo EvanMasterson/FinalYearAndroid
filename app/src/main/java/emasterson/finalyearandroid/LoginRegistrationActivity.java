@@ -2,6 +2,8 @@ package emasterson.finalyearandroid;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +20,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 /*
     @Reference
     https://github.com/firebase/quickstart-android/tree/master/auth
@@ -168,9 +173,19 @@ public class LoginRegistrationActivity extends AppCompatActivity {
     private void confirmUser(FirebaseUser user) {
         hideProgressDialog();
         if (user != null) {
+            sendTokenId();
             Intent i = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(i);
         }
+    }
+
+    private void sendTokenId(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String tokenId = preferences.getString("tokenId", "");
+        FirebaseUser user = auth.getCurrentUser();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference dbRef = database.getReference().child(user.getUid());
+        dbRef.child("tokenId").setValue(tokenId);
     }
 
     @VisibleForTesting

@@ -25,6 +25,7 @@
     <string name="saveBtn">Save</string>
     <string name="updateProfileTV">Update Your Profile!</string>
     <string name="changePasswordTV">Change Password?</string>
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <string-array name="spinner">
         <item>Heart Rate</item>
         <item>Steps</item>
