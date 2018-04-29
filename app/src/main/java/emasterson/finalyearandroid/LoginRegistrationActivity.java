@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,6 +22,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /*
     @Reference
     https://github.com/firebase/quickstart-android/tree/master/auth
@@ -30,13 +32,16 @@ import com.google.firebase.database.FirebaseDatabase;
  */
 public class LoginRegistrationActivity extends AppCompatActivity {
 
-    private Button loginBtn;
+    private Button loginBtn, verifyBtn;
     private TextView forgotPasswordTV;
     private TextView signupTV;
     private EditText emailET;
     private EditText passwordET;
 
     private FirebaseAuth auth;
+    private FirebaseUser user;
+    private static final String EMAIL_PATTERN = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+    private static final String PASSWORD_PATTERN = "((?=.*[a-z])(?=.*\\d)(?=.*[A-Z]).{8,40})";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +50,7 @@ public class LoginRegistrationActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.title_login);
 
         loginBtn = findViewById(R.id.loginBtn);
+        verifyBtn = findViewById(R.id.verifyBtn);
         forgotPasswordTV = findViewById(R.id.forgotPasswordTV);
         signupTV = findViewById(R.id.signupTV);
         emailET = findViewById(R.id.emailET);
@@ -72,17 +78,24 @@ public class LoginRegistrationActivity extends AppCompatActivity {
                 resetPassword(emailET.getText().toString());
             }
         });
+
+        verifyBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendVerificationEmail(emailET.getText().toString());
+            }
+        });
     }
 
     @Override
     protected void onStart(){
         super.onStart();
-        FirebaseUser currentUser = auth.getCurrentUser();
-        confirmUser(currentUser);
+        user = auth.getCurrentUser();
+        confirmUser(user);
     }
 
     private void signIn(String email, String password) {
-        if (!validateEmail() && !validatePassword()) {
+        if (!validateEmail(email) && !validatePassword(password)) {
             return;
         }
         showProgressDialog();
@@ -91,8 +104,7 @@ public class LoginRegistrationActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            FirebaseUser currentUser = auth.getCurrentUser();
-                            confirmUser(currentUser);
+                            checkIfEmailVerified();
                         } else {
                             Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
                             confirmUser(null);
@@ -103,7 +115,7 @@ public class LoginRegistrationActivity extends AppCompatActivity {
     }
 
     private void createAccount(final String email, String password) {
-        if (!validateEmail() && !validatePassword()) {
+        if (!validateEmail(email) && !validatePassword(password)) {
             return;
         }
         showProgressDialog();
@@ -112,11 +124,11 @@ public class LoginRegistrationActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            FirebaseUser currentUser = auth.getCurrentUser();
+                            sendVerificationEmail(email);
+                            user = auth.getCurrentUser();
                             FirebaseDatabase database = FirebaseDatabase.getInstance();
-                            DatabaseReference dbRef = database.getReference().child(currentUser.getUid());
+                            DatabaseReference dbRef = database.getReference().child(user.getUid());
                             dbRef.child("email").setValue(email);
-                            confirmUser(currentUser);
                         } else {
                             Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
                             confirmUser(null);
@@ -126,10 +138,35 @@ public class LoginRegistrationActivity extends AppCompatActivity {
                 });
     }
 
-    private void resetPassword(final String email){
-        if (!validateEmail()) {
-            return;
+    private void sendVerificationEmail(String email){
+        user = auth.getCurrentUser();
+        user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    auth.signOut();
+                    overridePendingTransition(0, 0);
+                    finish();
+                    overridePendingTransition(0, 0);
+                    startActivity(getIntent());
+                    Toast.makeText(getApplicationContext(), "Email sent...", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Unable to send email", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void checkIfEmailVerified(){
+        user = auth.getCurrentUser();
+        if(user.isEmailVerified()){
+            confirmUser(user);
+        } else {
+            Toast.makeText(getApplicationContext(), "Email not verified.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void resetPassword(final String email){
         showProgressDialog();
 
         auth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -145,30 +182,30 @@ public class LoginRegistrationActivity extends AppCompatActivity {
         });
     }
 
-    //TODO Proper email validation
-    private boolean validateEmail() {
-        boolean valid = true;
+    private boolean validateEmail(String email) {
+        boolean valid = false;
+        Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+        Matcher matcher = pattern.matcher(email);
 
-        String email = emailET.getText().toString();
-        if (TextUtils.isEmpty(email)) {
-            emailET.setError("Required.");
-            valid = false;
+        if(matcher.matches()){
+            valid = true;
         } else {
-            emailET.setError(null);
+            emailET.setError("Invalid Email");
+            Toast.makeText(getApplicationContext(), "Please enter valid email", Toast.LENGTH_LONG).show();
         }
         return valid;
     }
 
-    //TODO Proper password validation
-    private boolean validatePassword() {
-        boolean valid = true;
+    private boolean validatePassword(String password) {
+        boolean valid = false;
+        Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
+        Matcher matcher = pattern.matcher(password);
 
-        String password = passwordET.getText().toString();
-        if (TextUtils.isEmpty(password)) {
-            passwordET.setError("Required.");
-            valid = false;
+        if(matcher.matches()){
+            valid = true;
         } else {
-            passwordET.setError(null);
+            passwordET.setError("Invalid Password");
+            Toast.makeText(getApplicationContext(), "Password must be 8-40 characters long and contain AT LEAST\nONE upper case, ONE lower case and ONE number", Toast.LENGTH_LONG).show();
         }
         return valid;
     }
@@ -185,7 +222,7 @@ public class LoginRegistrationActivity extends AppCompatActivity {
     private void sendTokenId(){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String tokenId = preferences.getString("tokenId", "");
-        FirebaseUser user = auth.getCurrentUser();
+        user = auth.getCurrentUser();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference dbRef = database.getReference().child(user.getUid());
         dbRef.child("tokenId").setValue(tokenId);

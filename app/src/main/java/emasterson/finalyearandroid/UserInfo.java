@@ -91,6 +91,22 @@ public class UserInfo {
         dbRef.child("zones").push().setValue(zone);
     }
 
+    public void setFirstName(String firstName){
+        dbRef.child("firstName").setValue(firstName);
+    }
+
+    public void setLastName(String lastName){
+        dbRef.child("lastName").setValue(lastName);
+    }
+
+    public void setPhone(String phone){
+        dbRef.child("phone").setValue(phone);
+    }
+
+    public FirebaseAuth getAuth(){
+        return auth;
+    }
+
     public String getFirstName(){
         return firstName;
     }
