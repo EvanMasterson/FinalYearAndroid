@@ -28,6 +28,8 @@
     <string name="changePasswordTV">Change Password?</string>
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <string name="verifyBtn">Verify Email</string>
+    <string name="changeEmailTV">Change Email?</string>
+    <string name="emailBtn">Change Email</string>
     <string-array name="spinner">
         <item>Heart Rate</item>
         <item>Steps</item>

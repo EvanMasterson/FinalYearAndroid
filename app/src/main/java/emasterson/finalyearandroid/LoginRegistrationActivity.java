@@ -145,11 +145,9 @@ public class LoginRegistrationActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
                     auth.signOut();
-                    overridePendingTransition(0, 0);
-                    finish();
-                    overridePendingTransition(0, 0);
-                    startActivity(getIntent());
-                    Toast.makeText(getApplicationContext(), "Email sent...", Toast.LENGTH_SHORT).show();
+                    Intent logoutIntent = new Intent(getApplicationContext(), LoginRegistrationActivity.class);
+                    startActivity(logoutIntent);
+                    Toast.makeText(getApplicationContext(), "Verification Email sent...", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getApplicationContext(), "Unable to send email", Toast.LENGTH_SHORT).show();
                 }
@@ -173,7 +171,7 @@ public class LoginRegistrationActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
-                    Toast.makeText(getApplicationContext(), "Email sent...", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Password Reset Email sent...", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getApplicationContext(), "User:" + email + " does not exist.", Toast.LENGTH_LONG).show();
                 }
