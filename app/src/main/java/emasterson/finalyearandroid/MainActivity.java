@@ -28,7 +28,6 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         userInfo = new UserInfo();
-        userInfo.getUserData();
 
         geofenceBtn = findViewById(R.id.geofenceBtn);
         extraInfoBtn = findViewById(R.id.extraInfoBtn);
@@ -57,6 +56,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback{
     public void onMapReady(GoogleMap googleMap) {
         gMap = googleMap;
         gMap.setIndoorEnabled(true);
+        userInfo.getUserData();
         userInfo.setEventListener(new UserInfoListener() {
             @Override
             public void onEvent() {

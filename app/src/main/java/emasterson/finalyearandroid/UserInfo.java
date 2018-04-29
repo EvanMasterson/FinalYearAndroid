@@ -14,7 +14,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class UserInfo {
     private FirebaseAuth auth;
@@ -88,6 +87,10 @@ public class UserInfo {
         });
     }
 
+    public void addZone(ArrayList<LatLng> zone){
+        dbRef.child("zones").push().setValue(zone);
+    }
+
     public String getFirstName(){
         return firstName;
     }
@@ -112,7 +115,7 @@ public class UserInfo {
         return longitude;
     }
 
-    public ArrayList getUserZones(){
+    public ArrayList<ArrayList<LatLng>> getUserZones(){
         return completeZoneList;
     }
 }
