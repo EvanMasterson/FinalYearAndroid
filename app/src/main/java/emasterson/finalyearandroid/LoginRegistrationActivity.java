@@ -102,7 +102,7 @@ public class LoginRegistrationActivity extends AppCompatActivity {
                 });
     }
 
-    private void createAccount(String email, String password) {
+    private void createAccount(final String email, String password) {
         if (!validateEmail() && !validatePassword()) {
             return;
         }
@@ -113,6 +113,9 @@ public class LoginRegistrationActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseUser currentUser = auth.getCurrentUser();
+                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                            DatabaseReference dbRef = database.getReference().child(currentUser.getUid());
+                            dbRef.child("email").setValue(email);
                             confirmUser(currentUser);
                         } else {
                             Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
