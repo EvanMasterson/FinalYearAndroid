@@ -19,7 +19,7 @@ public class UserInfo {
     private FirebaseAuth auth;
     private FirebaseDatabase database;
     private DatabaseReference dbRef;
-    private String firstName, lastName, email, phone;
+    private String email, phone;
     private Double latitude, longitude, zoneLatitude, zoneLongitude;
     private ArrayList<ArrayList<LatLng>> completeZoneList = new ArrayList<>();
     private UserInfoListener listener;
@@ -44,12 +44,6 @@ public class UserInfo {
                     }
                     if(data.getKey().equals("longitude")){
                         longitude = Double.parseDouble(data.getValue().toString());
-                    }
-                    if(data.getKey().equals("firstName")){
-                        firstName = data.getValue().toString();
-                    }
-                    if(data.getKey().equals("lastName")){
-                        lastName = data.getValue().toString();
                     }
                     if(data.getKey().equals("email")){
                         email = data.getValue().toString();
@@ -91,28 +85,12 @@ public class UserInfo {
         dbRef.child("zones").push().setValue(zone);
     }
 
-    public void setFirstName(String firstName){
-        dbRef.child("firstName").setValue(firstName);
-    }
-
-    public void setLastName(String lastName){
-        dbRef.child("lastName").setValue(lastName);
-    }
-
     public void setPhone(String phone){
         dbRef.child("phone").setValue(phone);
     }
 
     public FirebaseAuth getAuth(){
         return auth;
-    }
-
-    public String getFirstName(){
-        return firstName;
-    }
-
-    public String getLastName(){
-        return lastName;
     }
 
     public String getEmail(){

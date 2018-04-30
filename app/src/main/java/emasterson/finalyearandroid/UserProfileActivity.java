@@ -3,6 +3,7 @@ package emasterson.finalyearandroid;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,19 +11,27 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 public class UserProfileActivity extends BaseActivity {
-    private EditText firstNameET, lastNameET, phoneET, emailET, passwordET, currentPasswordET, newPasswordET, repeatPasswordET;
-    private Button saveBtn, emailBtn, passwordBtn;
+    private EditText phoneET, verifyCodeET, emailET, passwordET, currentPasswordET, newPasswordET, repeatPasswordET;
+    private Button phoneBtn, verifyCodeBtn, emailBtn, passwordBtn;
     private UserInfo userInfo;
     private FirebaseUser user;
     private static final String PASSWORD_PATTERN = "((?=.*[a-z])(?=.*\\d)(?=.*[A-Z]).{8,40})";
+    private String phoneNumber, verifyCode, codeVerification;
+
+    private PhoneAuthProvider.OnVerificationStateChangedCallbacks phoneCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,26 +42,56 @@ public class UserProfileActivity extends BaseActivity {
         userInfo = new UserInfo();
         user = userInfo.getAuth().getCurrentUser();
 
-        firstNameET = findViewById(R.id.firstNameET);
-        lastNameET = findViewById(R.id.lastNameET);
         phoneET = findViewById(R.id.phoneET);
+        verifyCodeET = findViewById(R.id.verifyCodeET);
         emailET = findViewById(R.id.emailET);
         passwordET = findViewById(R.id.passwordET);
         currentPasswordET = findViewById(R.id.currentPasswordET);
         newPasswordET = findViewById(R.id.newPasswordET);
         repeatPasswordET = findViewById(R.id.repeatPasswordET);
-        saveBtn = findViewById(R.id.saveBtn);
+        phoneBtn = findViewById(R.id.phoneBtn);
+        verifyCodeBtn = findViewById(R.id.verifyCodeBtn);
         emailBtn = findViewById(R.id.emailBtn);
         passwordBtn = findViewById(R.id.passwordBtn);
 
-        getUserDetails();
+        verifyCodeET.setVisibility(View.GONE);
+        verifyCodeBtn.setVisibility(View.GONE);
 
-        saveBtn.setOnClickListener(new View.OnClickListener() {
+        phoneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userInfo.setFirstName(firstNameET.getText().toString());
-                userInfo.setLastName(lastNameET.getText().toString());
-                userInfo.setPhone(phoneET.getText().toString());
+                phoneNumber = phoneET.getText().toString();
+                if(!TextUtils.isEmpty(phoneNumber)) {
+                    userInfo.getUserData();
+                    userInfo.setEventListener(new UserInfoListener() {
+                        @Override
+                        public void onEvent() {
+                            if(phoneNumber.equals(userInfo.getPhone())){
+                                Toast.makeText(getApplicationContext(), phoneNumber + ", has already been setup for text alerts.", Toast.LENGTH_LONG).show();
+                                finish();
+                                startActivity(getIntent());
+                            } else {
+                                verifyNumber();
+                            }
+                        }
+                    });
+                } else {
+                    phoneET.setError("Required.");
+                    Toast.makeText(getApplicationContext(), "Phone number required.", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        verifyCodeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                verifyCode = verifyCodeET.getText().toString();
+                if(!TextUtils.isEmpty(verifyCode)) {
+                    verifyPhoneNumberWithCode(codeVerification, verifyCode);
+                } else {
+                    verifyCodeET.setError("Required.");
+                    Toast.makeText(getApplicationContext(), "Verification code required.", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -95,13 +134,31 @@ public class UserProfileActivity extends BaseActivity {
                 }
             }
         });
-    }
 
-    public void getUserDetails(){
-        firstNameET.setText(userInfo.getFirstName());
-        lastNameET.setText(userInfo.getLastName());
-        phoneET.setText(userInfo.getPhone());
-        emailET.setText(user.getEmail());
+        phoneCallback = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+            @Override
+            public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
+                Toast.makeText(getApplicationContext(), "Successfully Verified Number: " + phoneNumber, Toast.LENGTH_SHORT).show();
+                userInfo.setPhone(phoneNumber);
+                finish();
+                startActivity(getIntent());
+            }
+
+            @Override
+            public void onVerificationFailed(FirebaseException e) {
+                Toast.makeText(getApplicationContext(), "Error encountered verifying code", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onCodeSent(String verificationId, PhoneAuthProvider.ForceResendingToken token){
+                Toast.makeText(getApplicationContext(), "Verification code sent to: " + phoneNumber, Toast.LENGTH_SHORT).show();
+                codeVerification = verificationId;
+                phoneET.setVisibility(View.GONE);
+                phoneBtn.setVisibility(View.GONE);
+                verifyCodeET.setVisibility(View.VISIBLE);
+                verifyCodeBtn.setVisibility(View.VISIBLE);
+            }
+        };
     }
 
     public Boolean validatePasswordFields(String newPass, String repeatPass){
@@ -159,5 +216,15 @@ public class UserProfileActivity extends BaseActivity {
                 }
             }
         });
+    }
+
+    public void verifyNumber(){
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(phoneNumber, 60, TimeUnit.SECONDS, this, phoneCallback);
+        auth.setLanguageCode("IE");
+    }
+
+    public void verifyPhoneNumberWithCode(String verificationId, String code){
+        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
+        phoneCallback.onVerificationCompleted(credential);
     }
 }

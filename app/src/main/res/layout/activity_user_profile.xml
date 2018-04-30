@@ -31,39 +31,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <EditText
-                android:id="@+id/firstNameET"
+            <TextView
+                android:id="@+id/phoneTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:ems="10"
-                android:hint="@string/firstNameHint"
-                android:inputType="textPersonName"
+                android:text="@string/phoneTV"
                 android:textAlignment="center"
-                app:layout_constraintBottom_toTopOf="@+id/lastNameET"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.503"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/updateProfileTV" />
-
-            <EditText
-                android:id="@+id/lastNameET"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:ems="10"
-                android:hint="@string/lastNameHint"
-                android:inputType="textPersonName"
-                android:textAlignment="center"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/emailET"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.503"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/phoneET" />
 
             <EditText
                 android:id="@+id/phoneET"
@@ -81,15 +59,45 @@
                 app:layout_constraintStart_toStartOf="parent"
                 tools:layout_editor_absoluteY="199dp" />
 
+            <EditText
+                android:id="@+id/verifyCodeET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:ems="10"
+                android:hint="@string/verifyCodeHint"
+                android:inputType="phone"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.503"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_editor_absoluteY="199dp" />
+
             <Button
-                android:id="@+id/saveBtn"
+                android:id="@+id/verifyCodeBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
-                android:text="@string/saveBtn"
+                android:text="@string/verifyCodeBtn"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <Button
+                android:id="@+id/phoneBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:text="@string/phoneBtn"
                 android:textAlignment="center"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -106,7 +114,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/emailET"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/saveBtn" />
+                app:layout_constraintTop_toBottomOf="@+id/phoneBtn" />
 
             <EditText
             android:id="@+id/emailET"

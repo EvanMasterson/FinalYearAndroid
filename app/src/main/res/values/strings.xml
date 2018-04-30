@@ -17,12 +17,9 @@
     <string name="menu_logout">Logout</string>
     <string name="extra_info_button">View Extra Info</string>
     <string name="geofence_button">View/Edit Geofences</string>
-    <string name="firstNameHint">Enter first name here</string>
-    <string name="lastNameHint">Enter last name here</string>
-    <string name="phoneHint">Enter phone number here</string>
+    <string name="phoneHint">Enter in the format of: +353860000000</string>
     <string name="newPasswordHint">Enter new password here</string>
     <string name="repeatNewPasswordHint">Repeat new password here</string>
-    <string name="saveBtn">Save</string>
     <string name="passwordBtn">Update Password</string>
     <string name="updateProfileTV">Update Your Profile!</string>
     <string name="changePasswordTV">Change Password?</string>
@@ -30,6 +27,10 @@
     <string name="verifyBtn">Verify Email</string>
     <string name="changeEmailTV">Change Email?</string>
     <string name="emailBtn">Change Email</string>
+    <string name="phoneTV">Text Alerts?</string>
+    <string name="phoneBtn">Opt In</string>
+    <string name="verifyCodeHint">Enter Verification Code</string>
+    <string name="verifyCodeBtn">Verify</string>
     <string-array name="spinner">
         <item>Heart Rate</item>
         <item>Steps</item>
