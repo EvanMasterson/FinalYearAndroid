@@ -19,7 +19,7 @@ public class UserInfo {
     private FirebaseAuth auth;
     private FirebaseDatabase database;
     private DatabaseReference dbRef;
-    private String email, phone;
+    private String phone;
     private Double latitude, longitude, zoneLatitude, zoneLongitude;
     private ArrayList<ArrayList<LatLng>> completeZoneList = new ArrayList<>();
     private UserInfoListener listener;
@@ -45,13 +45,11 @@ public class UserInfo {
                     if(data.getKey().equals("longitude")){
                         longitude = Double.parseDouble(data.getValue().toString());
                     }
-                    if(data.getKey().equals("email")){
-                        email = data.getValue().toString();
-                    }
                     if(data.getKey().equals("phone")){
                         phone = data.getValue().toString();
                     }
                     if(data.getKey().equals("zones")){
+                        completeZoneList.clear();
                         for(DataSnapshot zones : data.getChildren()){
                             ArrayList<LatLng> listGeofencePoints = new ArrayList<>();
                             try {
@@ -91,10 +89,6 @@ public class UserInfo {
 
     public FirebaseAuth getAuth(){
         return auth;
-    }
-
-    public String getEmail(){
-        return email;
     }
 
     public String getPhone(){

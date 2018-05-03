@@ -67,7 +67,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback{
                 if(latitude != null && longitude != null) {
                     gMap.clear();
                     LatLng watch = new LatLng(latitude, longitude);
-                    gMap.addMarker(new MarkerOptions().position(watch).title("Current Watch Location"));
+                    gMap.addMarker(new MarkerOptions().position(watch).title(watch.toString()));
                     gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(watch, 16.0f));
                 }
 
