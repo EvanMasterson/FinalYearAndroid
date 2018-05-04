@@ -19,9 +19,10 @@ public class UserInfo {
     private FirebaseAuth auth;
     private FirebaseDatabase database;
     private DatabaseReference dbRef;
-    private String phone;
+    private String phone, zoneColour;
     private Double latitude, longitude, zoneLatitude, zoneLongitude;
     private ArrayList<ArrayList<LatLng>> completeZoneList = new ArrayList<>();
+    private ArrayList<String> completeZoneColourList = new ArrayList<>();
     private UserInfoListener listener;
 
     public UserInfo(){
@@ -56,10 +57,15 @@ public class UserInfo {
                                 JSONArray jsonArray = new JSONArray(zones.getValue().toString());
                                 for(int i=0; i<jsonArray.length(); i++){
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                    zoneLatitude = Double.parseDouble(jsonObject.getString("latitude"));
-                                    zoneLongitude = Double.parseDouble(jsonObject.getString("longitude"));
-                                    LatLng point = new LatLng(zoneLatitude, zoneLongitude);
-                                    listGeofencePoints.add(point);
+                                    if(i==jsonArray.length()-1){
+                                        zoneColour = jsonObject.getString("colour");
+                                        completeZoneColourList.add(zoneColour);
+                                    } else {
+                                        zoneLatitude = Double.parseDouble(jsonObject.getString("latitude"));
+                                        zoneLongitude = Double.parseDouble(jsonObject.getString("longitude"));
+                                        LatLng point = new LatLng(zoneLatitude, zoneLongitude);
+                                        listGeofencePoints.add(point);
+                                    }
                                 }
                                 completeZoneList.add(listGeofencePoints);
                             } catch(Exception e) {
@@ -79,8 +85,12 @@ public class UserInfo {
         });
     }
 
-    public void addZone(ArrayList<LatLng> zone){
-        dbRef.child("zones").push().setValue(zone);
+    // Push zone list to db, and add zone colour to end of list in db
+    public void addZone(ArrayList<LatLng> zone, String zoneColour){
+        String size = String.valueOf(zone.size());
+        String key = dbRef.child("zones").push().getKey();
+        dbRef.child("zones").child(key).setValue(zone);
+        dbRef.child("zones").child(key).child(size).child("colour").setValue(zoneColour);
     }
 
     public void setPhone(String phone){
@@ -103,7 +113,11 @@ public class UserInfo {
         return longitude;
     }
 
-    public ArrayList<ArrayList<LatLng>> getUserZones(){
+    public ArrayList<ArrayList<LatLng>> getZones(){
         return completeZoneList;
+    }
+
+    public ArrayList<String> getZoneColours(){
+        return completeZoneColourList;
     }
 }

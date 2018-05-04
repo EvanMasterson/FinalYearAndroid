@@ -34,6 +34,7 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
     private Polygon polygon;
     private ArrayList<LatLng> listGeofencePoints = new ArrayList<>();
     private ArrayList<ArrayList<LatLng>> completeZoneList = new ArrayList<>();
+    private ArrayList<String> completeZoneColourList = new ArrayList<>();
     private ArrayList<Polyline> polylineList = new ArrayList<>();
     private ArrayList<Polygon> polygonList = new ArrayList<>();
     private View view;
@@ -85,7 +86,8 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
             public void onEvent() {
                 latitude = userInfo.getLatitude();
                 longitude = userInfo.getLongitude();
-                completeZoneList = userInfo.getUserZones();
+                completeZoneList = userInfo.getZones();
+                completeZoneColourList = userInfo.getZoneColours();
 
                 if(latitude != null && longitude != null) {
                     gMap.clear();
@@ -94,9 +96,9 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
                     gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(watch, 16.0f));
                 }
 
-                if(!completeZoneList.isEmpty()){
+                if(!completeZoneList.isEmpty() && !completeZoneColourList.isEmpty() &&(completeZoneList.size()==completeZoneColourList.size())){
                     for(int i=0; i<completeZoneList.size(); i++){
-                        createPolygon(completeZoneList.get(i));
+                        createPolygon(completeZoneList.get(i), completeZoneColourList.get(i));
                     }
                 }
             }
@@ -121,7 +123,7 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
                 polylineOptions.add(listGeofencePoints.get(0));
                 polyline = gMap.addPolyline(polylineOptions);
                 polylineList.add(polyline);
-                createPolygon(listGeofencePoints);
+                createPolygon(listGeofencePoints, "Green");
             }
         }
         Toast.makeText(getApplicationContext(), "Click marker's to remove", Toast.LENGTH_SHORT).show();
@@ -156,9 +158,8 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
             public void onClick(DialogInterface dialog, int which) {
 //                view.setVisibility(View.INVISIBLE);
                 ((ViewGroup) view.getParent()).removeView(view);
-                reDrawPolygon(polygon, zoneColour);
                 dialog.dismiss();
-                savePolygon();
+                savePolygon(zoneColour);
             }
         });
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -169,26 +170,6 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
             }
         });
         alert.show();
-    }
-
-    public void reDrawPolygon(Polygon clickedPolygon, String zoneColour){
-        clickedPolygon.remove();
-        int fillColor = 0;
-        if(zoneColour.equals("Green")){
-            fillColor = 0x5000ff00;
-        } else if(zoneColour.equals("Yellow")) {
-            fillColor = 0x50ffff00;
-        } else if(zoneColour.equals("Red")){
-            fillColor = 0x50ff0000;
-        }
-        PolygonOptions polygonOptions = new PolygonOptions();
-        polygonOptions.addAll(polygon.getPoints());
-        polygonOptions.strokeColor(Color.BLUE);
-        polygonOptions.fillColor(fillColor);
-        polygonOptions.strokeWidth(7);
-        Polygon polygon = gMap.addPolygon(polygonOptions);
-        polygon.setClickable(true);
-        polygonList.add(polygon);
     }
 
     public void reDrawPolylines(){
@@ -205,20 +186,28 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
         }
     }
 
-    public void createPolygon(ArrayList<LatLng> zoneList) {
-        System.out.println(zoneList);
+    public void createPolygon(ArrayList<LatLng> zoneList, String zoneColour) {
+        int fillColor = 0;
+        if(zoneColour.equals("Green")){
+            fillColor = 0x5000ff00;
+        } else if(zoneColour.equals("Yellow")) {
+            fillColor = 0x50ffff00;
+        } else if(zoneColour.equals("Red")){
+            fillColor = 0x50ff0000;
+        }
         PolygonOptions polygonOptions = new PolygonOptions();
         polygonOptions.addAll(zoneList);
         polygonOptions.strokeColor(Color.BLUE);
-        polygonOptions.fillColor(0x5000ff00);
+        polygonOptions.fillColor(fillColor);
         polygonOptions.strokeWidth(7);
         polygon = gMap.addPolygon(polygonOptions);
         polygon.setClickable(true);
         polygonList.add(polygon);
     }
 
-    public void savePolygon(){
-        userInfo.addZone(listGeofencePoints);
-        listGeofencePoints.clear();
+    public void savePolygon(String zoneColour){
+        userInfo.addZone(listGeofencePoints, zoneColour);
+        finish();
+        startActivity(getIntent());
     }
 }

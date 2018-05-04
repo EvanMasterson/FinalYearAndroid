@@ -21,6 +21,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback{
     private Double latitude, longitude;
     private GoogleMap gMap;
     private ArrayList<ArrayList<LatLng>> completeZoneList = new ArrayList<>();
+    private ArrayList<String> completeZoneColourList = new ArrayList<>();
     private UserInfo userInfo;
 
     @Override
@@ -62,7 +63,8 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback{
             public void onEvent() {
                 latitude = userInfo.getLatitude();
                 longitude = userInfo.getLongitude();
-                completeZoneList = userInfo.getUserZones();
+                completeZoneList = userInfo.getZones();
+                completeZoneColourList = userInfo.getZoneColours();
 
                 if(latitude != null && longitude != null) {
                     gMap.clear();
@@ -71,20 +73,28 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback{
                     gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(watch, 16.0f));
                 }
 
-                if(!completeZoneList.isEmpty()){
+                if(!completeZoneList.isEmpty() && !completeZoneColourList.isEmpty() &&(completeZoneList.size()==completeZoneColourList.size())){
                     for(int i=0; i<completeZoneList.size(); i++){
-                        createPolygon(completeZoneList.get(i));
+                        createPolygon(completeZoneList.get(i), completeZoneColourList.get(i));
                     }
                 }
             }
         });
     }
 
-    public void createPolygon(ArrayList<LatLng> zoneList) {
+    public void createPolygon(ArrayList<LatLng> zoneList, String zoneColour) {
+        int fillColor = 0;
+        if(zoneColour.equals("Green")){
+            fillColor = 0x5000ff00;
+        } else if(zoneColour.equals("Yellow")) {
+            fillColor = 0x50ffff00;
+        } else if(zoneColour.equals("Red")){
+            fillColor = 0x50ff0000;
+        }
         PolygonOptions polygonOptions = new PolygonOptions();
         polygonOptions.addAll(zoneList);
         polygonOptions.strokeColor(Color.BLUE);
-        polygonOptions.fillColor(0x5000ff00);
+        polygonOptions.fillColor(fillColor);
         polygonOptions.strokeWidth(7);
         gMap.addPolygon(polygonOptions);
     }
