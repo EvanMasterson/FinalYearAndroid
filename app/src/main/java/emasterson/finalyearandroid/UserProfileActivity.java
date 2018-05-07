@@ -6,8 +6,10 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -26,6 +28,7 @@ import java.util.regex.Pattern;
 public class UserProfileActivity extends BaseActivity {
     private EditText phoneET, verifyCodeET, emailET, passwordET, currentPasswordET, newPasswordET, repeatPasswordET;
     private Button phoneBtn, verifyCodeBtn, emailBtn, passwordBtn;
+    private ToggleButton alertTglBtn;
     private UserInfo userInfo;
     private FirebaseUser user;
     private static final String PASSWORD_PATTERN = "((?=.*[a-z])(?=.*\\d)(?=.*[A-Z]).{8,40})";
@@ -53,6 +56,7 @@ public class UserProfileActivity extends BaseActivity {
         verifyCodeBtn = findViewById(R.id.verifyCodeBtn);
         emailBtn = findViewById(R.id.emailBtn);
         passwordBtn = findViewById(R.id.passwordBtn);
+        alertTglBtn = findViewById(R.id.alertTglBtn);
 
         verifyCodeET.setVisibility(View.GONE);
         verifyCodeBtn.setVisibility(View.GONE);
@@ -131,6 +135,19 @@ public class UserProfileActivity extends BaseActivity {
                             }
                         }
                     });
+                }
+            }
+        });
+
+        alertTglBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    userInfo.setAlertStatus(true);
+                    Toast.makeText(getApplicationContext(), "Notification alerts turned on.", Toast.LENGTH_LONG).show();
+                } else {
+                    userInfo.setAlertStatus(false);
+                    Toast.makeText(getApplicationContext(), "Notification alerts turned off.", Toast.LENGTH_LONG).show();
                 }
             }
         });

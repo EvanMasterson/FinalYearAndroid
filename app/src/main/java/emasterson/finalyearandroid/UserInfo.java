@@ -97,6 +97,10 @@ public class UserInfo {
         dbRef.child("phone").setValue(phone);
     }
 
+    public void setAlertStatus(Boolean status){
+        dbRef.child("notifications").setValue(status);
+    }
+
     public FirebaseAuth getAuth(){
         return auth;
     }

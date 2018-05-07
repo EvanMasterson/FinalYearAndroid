@@ -16,7 +16,7 @@
     <string name="loading">Loading…</string>
     <string name="menu_logout">Logout</string>
     <string name="extra_info_button">View Extra Info</string>
-    <string name="geofence_button">View/Edit Geofences</string>
+    <string name="geofence_button">Edit Geofences</string>
     <string name="phoneHint">Enter in the format of: +353860000000</string>
     <string name="newPasswordHint">Enter new password here</string>
     <string name="repeatNewPasswordHint">Repeat new password here</string>
@@ -31,6 +31,7 @@
     <string name="phoneBtn">Opt In</string>
     <string name="verifyCodeHint">Enter Verification Code</string>
     <string name="verifyCodeBtn">Verify</string>
+    <string name="alertTV">Receive Notification Alerts?</string>
     <string-array name="spinner">
         <item>Heart Rate</item>
         <item>Steps</item>

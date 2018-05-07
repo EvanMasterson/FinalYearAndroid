@@ -129,6 +129,7 @@ public class LoginRegistrationActivity extends AppCompatActivity {
                             FirebaseDatabase database = FirebaseDatabase.getInstance();
                             DatabaseReference dbRef = database.getReference().child(user.getUid());
                             dbRef.child("email").setValue(email);
+                            dbRef.child("notifications").setValue(true);
                         } else {
                             Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
                             confirmUser(null);
