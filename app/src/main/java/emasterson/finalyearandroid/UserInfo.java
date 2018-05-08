@@ -11,6 +11,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class UserInfo {
     private Double latitude, longitude, zoneLatitude, zoneLongitude;
     private ArrayList<ArrayList<LatLng>> completeZoneList = new ArrayList<>();
     private ArrayList<String> completeZoneColourList = new ArrayList<>();
+    private JSONArray heartRateInfo;
     private UserInfoListener listener;
 
     public UserInfo(){
@@ -48,6 +50,20 @@ public class UserInfo {
                     }
                     if(data.getKey().equals("phone")){
                         phone = data.getValue().toString();
+                    }
+                    if(data.getKey().equals("heart_rate")){
+                        heartRateInfo = new JSONArray();
+                        try {
+                            JSONArray jsonArray = new JSONArray(data.getValue().toString());
+                            for(int i=0; i<jsonArray.length(); i++){
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("heart_rate", jsonArray.getJSONObject(i).getString("heart_rate"));
+                                jsonObject.put("date_time", jsonArray.getJSONObject(i).getString("date_time"));
+                                heartRateInfo.put(i, jsonObject);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                     if(data.getKey().equals("zones")){
                         completeZoneList.clear();
@@ -123,5 +139,9 @@ public class UserInfo {
 
     public ArrayList<String> getZoneColours(){
         return completeZoneColourList;
+    }
+
+    public JSONArray getHeartRateInfo(){
+        return heartRateInfo;
     }
 }
