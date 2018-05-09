@@ -82,7 +82,7 @@ public class LoginRegistrationActivity extends AppCompatActivity {
         verifyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendVerificationEmail(emailET.getText().toString());
+                signIn(emailET.getText().toString(), passwordET.getText().toString());
             }
         });
     }
@@ -124,7 +124,7 @@ public class LoginRegistrationActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            sendVerificationEmail(email);
+                            sendVerificationEmail();
                             user = auth.getCurrentUser();
                             FirebaseDatabase database = FirebaseDatabase.getInstance();
                             DatabaseReference dbRef = database.getReference().child(user.getUid());
@@ -139,29 +139,34 @@ public class LoginRegistrationActivity extends AppCompatActivity {
                 });
     }
 
-    private void sendVerificationEmail(String email){
+    private void sendVerificationEmail(){
         user = auth.getCurrentUser();
-        user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    auth.signOut();
-                    Intent logoutIntent = new Intent(getApplicationContext(), LoginRegistrationActivity.class);
-                    startActivity(logoutIntent);
-                    Toast.makeText(getApplicationContext(), "Verification Email sent...", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Unable to send email", Toast.LENGTH_SHORT).show();
+        if(user != null) {
+            user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        auth.signOut();
+                        Intent logoutIntent = new Intent(getApplicationContext(), LoginRegistrationActivity.class);
+                        startActivity(logoutIntent);
+                        Toast.makeText(getApplicationContext(), "Verification Email sent...", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Unable to send email", Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     private void checkIfEmailVerified(){
         user = auth.getCurrentUser();
-        if(user.isEmailVerified()){
-            confirmUser(user);
-        } else {
-            Toast.makeText(getApplicationContext(), "Email not verified.", Toast.LENGTH_SHORT).show();
+        if(user != null) {
+            if (user.isEmailVerified()) {
+                confirmUser(user);
+            } else {
+                sendVerificationEmail();
+                Toast.makeText(getApplicationContext(), "Email not verified.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

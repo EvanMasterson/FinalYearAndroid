@@ -25,6 +25,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+/*
+    @Reference
+    https://github.com/halfhp/androidplot
+ */
 public class ExtraInfoActivity extends BaseActivity {
     private UserInfo userInfo;
     private JSONArray heartRateInfo = new JSONArray();
