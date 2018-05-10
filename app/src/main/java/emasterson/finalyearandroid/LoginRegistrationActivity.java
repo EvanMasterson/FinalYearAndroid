@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
     https://firebase.google.com/docs/auth/android/password-auth?authuser=0
  */
 public class LoginRegistrationActivity extends AppCompatActivity {
+    // Declaration of variables
 
     private Button loginBtn, verifyBtn;
     private TextView forgotPasswordTV;
@@ -43,6 +44,10 @@ public class LoginRegistrationActivity extends AppCompatActivity {
     private static final String EMAIL_PATTERN = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     private static final String PASSWORD_PATTERN = "((?=.*[a-z])(?=.*\\d)(?=.*[A-Z]).{8,40})";
 
+    /*
+        Responsible for instantiating all objects required in the class
+        Responsible for setting onClickListener for Buttons
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,7 +99,14 @@ public class LoginRegistrationActivity extends AppCompatActivity {
         confirmUser(user);
     }
 
-    private void signIn(String email, String password) {
+    /*
+        Responsible for allowing the user to sign in via the loginBtn onClickListener
+        Makes a call to validateEmail and validatePassword functions before making a call to Firebase
+        Makes a call to Firebase API, requesting to signInWithEmailAndPassword
+        On Success, makes a call to checkIfEmailVerified
+        On Failure, displays message, confirms user as being null
+     */
+    public void signIn(String email, String password) {
         if (!validateEmail(email) && !validatePassword(password)) {
             return;
         }
@@ -114,6 +126,13 @@ public class LoginRegistrationActivity extends AppCompatActivity {
                 });
     }
 
+    /*
+        Responsible for allowing the user to sign up via the signUpBtn onClickListener
+        Makes a call to validateEmail and validatePassword functions before making a call to Firebase
+        Makes a call to Firebase API, requesting to createUserWithEmailAndPassword
+        On Success, makes a call to sendVerificationEmail, gets user object and sets default info in DB
+        On Failure, displays message, confirms user as being null
+     */
     private void createAccount(final String email, String password) {
         if (!validateEmail(email) && !validatePassword(password)) {
             return;
@@ -139,6 +158,14 @@ public class LoginRegistrationActivity extends AppCompatActivity {
                 });
     }
 
+    /*
+        Responsible for sending verification email to user on creating an account
+        Activated by createAccount and checkIfEmailVerified which creates a user object
+        The user object needs to exist to be able to send an email to that user
+        Makes a call to Firebase API, requesting to sendEmailVerification
+        On Success, signs the user out immediately as they are not yet verfied
+        On Failure, displays message
+     */
     private void sendVerificationEmail(){
         user = auth.getCurrentUser();
         if(user != null) {
@@ -158,6 +185,12 @@ public class LoginRegistrationActivity extends AppCompatActivity {
         }
     }
 
+    /*
+        Responsible for checking if the user has verified their email
+        Activated by signIn, checks if user signing in is verified
+        On Success, calls confirmUser
+        On Failure, calls sendVerificationEmail which will send another email to the user
+     */
     private void checkIfEmailVerified(){
         user = auth.getCurrentUser();
         if(user != null) {
@@ -170,6 +203,12 @@ public class LoginRegistrationActivity extends AppCompatActivity {
         }
     }
 
+    /*
+        Responsible for resetting the users password
+        Makes a call to Firebase API, requesting to sendPasswordResetEmail
+        On Success, email is sent by Firebase and displays message informing user
+        On Failure, displays message email does not exist
+     */
     private void resetPassword(final String email){
         showProgressDialog();
 
@@ -186,7 +225,12 @@ public class LoginRegistrationActivity extends AppCompatActivity {
         });
     }
 
-    private boolean validateEmail(String email) {
+    /*
+        Responsible for validating the email entered by the user
+        Returns true if email is valid
+        Return false if email is not valid, also displays error message
+     */
+    public boolean validateEmail(String email) {
         boolean valid = false;
         Pattern pattern = Pattern.compile(EMAIL_PATTERN);
         Matcher matcher = pattern.matcher(email);
@@ -200,7 +244,12 @@ public class LoginRegistrationActivity extends AppCompatActivity {
         return valid;
     }
 
-    private boolean validatePassword(String password) {
+    /*
+        Responsible for validating the password entered by the user
+        Returns true if password is valid
+        Return false if password is not valid, also displays error message
+     */
+    public boolean validatePassword(String password) {
         boolean valid = false;
         Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
         Matcher matcher = pattern.matcher(password);
@@ -214,6 +263,11 @@ public class LoginRegistrationActivity extends AppCompatActivity {
         return valid;
     }
 
+    /*
+        Responsible for redirecting user to MainActivity
+        Called is valid user exists
+        If user is not null, makes a call to sendTokenId and starts intent
+     */
     private void confirmUser(FirebaseUser user) {
         hideProgressDialog();
         if (user != null) {
@@ -223,6 +277,12 @@ public class LoginRegistrationActivity extends AppCompatActivity {
         }
     }
 
+    /*
+        Responsible for saving device tokenId
+        TokenId is saved in shared preferences by MyFirebaseInstanceIDService class
+        Pushes users tokenId to Firebase
+        TokenId is used for sending push notifications to the device
+     */
     private void sendTokenId(){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String tokenId = preferences.getString("tokenId", "");
@@ -232,9 +292,11 @@ public class LoginRegistrationActivity extends AppCompatActivity {
         dbRef.child("tokenId").setValue(tokenId);
     }
 
-    @VisibleForTesting
     public ProgressDialog mProgressDialog;
 
+    /*
+        Responsible for displaying loading message on screen when called
+     */
     public void showProgressDialog() {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);
@@ -245,6 +307,9 @@ public class LoginRegistrationActivity extends AppCompatActivity {
         mProgressDialog.show();
     }
 
+    /*
+        Responsible for hiding loading message when called
+     */
     public void hideProgressDialog() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
