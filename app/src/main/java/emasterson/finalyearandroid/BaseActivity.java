@@ -10,6 +10,10 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+/*
+    This activity is responsible for implementing the options menu
+    It is extended by every other activity and allows the user to freely navigate through the application
+ */
 public class BaseActivity extends AppCompatActivity {
     FirebaseAuth auth;
 

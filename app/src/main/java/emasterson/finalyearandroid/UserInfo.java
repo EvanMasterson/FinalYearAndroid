@@ -16,7 +16,13 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/*
+    This class is responsible for retrieving all the information associated with a user from Firebase DB
+    Using a custom event listener called UserInfoListener, activities that wish to retrieve data from this class
+    must implement the event listener
+ */
 public class UserInfo {
+    // Declaration of variables
     private FirebaseAuth auth;
     private FirebaseDatabase database;
     private DatabaseReference dbRef;
@@ -37,6 +43,11 @@ public class UserInfo {
         this.listener = listener;
     }
 
+    /*
+        Responsible for retrieving all of the information on the associate user and storing it in
+        their relevant variables which can be access through getters below
+        Makes use of JSONArrays and JSONObjects to access formatted data in the DB
+     */
     public void getUserData() {
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -101,6 +112,10 @@ public class UserInfo {
         });
     }
 
+    /*
+        Getters and setters below allow other activities to retrieve information on the user
+        or push new data to the DB such as adding a new geofence zone
+     */
     // Push zone list to db, and add zone colour to end of list in db
     public void addZone(ArrayList<LatLng> zone, String zoneColour){
         String size = String.valueOf(zone.size());

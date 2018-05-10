@@ -29,11 +29,19 @@ import java.util.Date;
     @Reference
     https://github.com/halfhp/androidplot
  */
+/*
+    This acitivty is responsible for displaying any extra information about the watch associated with the user
+ */
 public class ExtraInfoActivity extends BaseActivity {
+    // Declaration of variables
     private UserInfo userInfo;
     private JSONArray heartRateInfo = new JSONArray();
     private XYPlot plot;
 
+    /*
+        Responsible for instantiating all objects required in the class
+        Responsible for setting onClickListener for Buttons
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +64,10 @@ public class ExtraInfoActivity extends BaseActivity {
 
         userInfo = new UserInfo();
         userInfo.getUserData();
+        /*
+            Custom event listener to retrieve the latest information associated with the user from Firebase DB
+            In this case we are calling getHeartRateInfo method
+         */
         userInfo.setEventListener(new UserInfoListener() {
             @Override
             public void onEvent() {
@@ -87,12 +99,21 @@ public class ExtraInfoActivity extends BaseActivity {
         });
     }
 
+    /*
+        Responsible for updating the graph plot whenever the values change
+        Called from inside the setEventListener for UserInfo when updated
+        Clears the current plot and redefines series given ArrayLists passed in then redraws graph
+     */
     public void updateGraph(ArrayList<Integer> heartRate, final ArrayList<Date> dateTime){
         plot.clear();
         XYSeries series = new SimpleXYSeries(heartRate, SimpleXYSeries.ArrayFormat.Y_VALS_ONLY,"Series");
         LineAndPointFormatter seriesFormat = new LineAndPointFormatter(Color.RED, Color.DKGRAY, null, null);
         seriesFormat.getVertexPaint().setStrokeWidth(30f);
         seriesFormat.setInterpolationParams(new CatmullRomInterpolator.Params(20, CatmullRomInterpolator.Type.Centripetal));
+        /*
+            Custom formatter to override default configuration
+            Replaces Y axis label values of 1,2,3... etc with the Time value associated with each X value point
+         */
         plot.getGraph().getLineLabelStyle(XYGraphWidget.Edge.BOTTOM).setFormat(new Format() {
             @Override
             public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {

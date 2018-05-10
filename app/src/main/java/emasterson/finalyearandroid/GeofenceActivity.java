@@ -26,7 +26,16 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 
-public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnPolygonClickListener, AdapterView.OnItemSelectedListener{
+/*
+    This activity is resonsible for allowing the user to create, update and delete geofence zones
+    Contains google maps with various on click listeners
+ */
+public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback,
+                                                            GoogleMap.OnMapLongClickListener,
+                                                            GoogleMap.OnMarkerClickListener,
+                                                            GoogleMap.OnPolygonClickListener,
+                                                            AdapterView.OnItemSelectedListener{
+    // Declaration of variables
     private Double latitude, longitude;
     private GoogleMap gMap;
     private LatLng point, previousPoint;
@@ -42,6 +51,10 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
     private Spinner zoneSpinner;
     private UserInfo userInfo;
 
+    /*
+        Responsible for instantiating all objects required in the class
+        Responsible for setting onClickListener for Buttons
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +86,12 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
         return;
     }
 
+    /*
+        Responsible for intialising the google map
+        Contains event listener for UserInfo, retrieves relevant data such as
+        current latitude/longitude and list of already defined zones
+        Updates map with already existing information
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         gMap = googleMap;
@@ -105,6 +124,11 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
         });
     }
 
+    /*
+        Responsible for allowing the user to define geofence zones
+        Stores points in an ArrayList and creates Polylines between them
+        Once enough points are plotted, makes a call to createPolygon to show on map
+     */
     @Override
     public void onMapLongClick(LatLng location){
         point = location;
@@ -129,6 +153,10 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
         Toast.makeText(getApplicationContext(), "Click marker's to remove", Toast.LENGTH_SHORT).show();
     }
 
+    /*
+        Responsible for allowing the user to remove markers
+        If marker is accidentally placed, user can click and remove geofence to start over
+     */
     @Override
     public boolean onMarkerClick(Marker marker){
         for(int i=0; i<listGeofencePoints.size(); i++){
@@ -144,6 +172,13 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
         return true;
     }
 
+    /*
+        Responsible for enabling the user to pick the zone colour of the clicked polygon
+        If polygon exists it means it is a geofence zone, displays new view containing
+        spinner with zone colour options green/yellow/red
+        On selection and save, makes a call to savePolygon which stores information in DB
+        On cancellation, returns user back to view
+     */
     @Override
     public void onPolygonClick(final Polygon polygon) {
         System.out.println("Clicked");
@@ -172,6 +207,10 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
         alert.show();
     }
 
+    /*
+        Responsible for drawing the polylines of a geofence
+        This occures if the user wants to modify geofence
+     */
     public void reDrawPolylines(){
         PolylineOptions polylineOptions = new PolylineOptions().color(Color.BLUE);
 
@@ -186,6 +225,10 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
         }
     }
 
+    /*
+        Responsible for creating polygon on map
+        Takes in list of points and colour of zone
+     */
     public void createPolygon(ArrayList<LatLng> zoneList, String zoneColour) {
         int fillColor = 0;
         if(zoneColour.equals("Green")){
@@ -205,6 +248,9 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
         polygonList.add(polygon);
     }
 
+    /*
+        Responsible for saving desired polygon and pushing its information to Firebase DB
+     */
     public void savePolygon(String zoneColour){
         userInfo.addZone(listGeofencePoints, zoneColour);
         finish();

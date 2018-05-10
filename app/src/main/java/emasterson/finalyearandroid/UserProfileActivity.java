@@ -24,8 +24,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+/*
+    This activity is responsible for allowing the user to configure details about their account
+    including toggling alerts on/off, opting into texts, changing email and changing password
+ */
 public class UserProfileActivity extends BaseActivity {
+    // Declaration of variables
     private EditText phoneET, verifyCodeET, emailET, passwordET, currentPasswordET, newPasswordET, repeatPasswordET;
     private Button phoneBtn, verifyCodeBtn, emailBtn, passwordBtn;
     private ToggleButton alertTglBtn;
@@ -36,6 +40,10 @@ public class UserProfileActivity extends BaseActivity {
 
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks phoneCallback;
 
+    /*
+        Responsible for instantiating all objects required in the class
+        Responsible for setting onClickListener for Buttons
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +69,11 @@ public class UserProfileActivity extends BaseActivity {
         verifyCodeET.setVisibility(View.GONE);
         verifyCodeBtn.setVisibility(View.GONE);
 
+        /*
+            Responsible for allowing the user to opt into text alerts
+            Must provide a valid phone number, if it doesn't already exist in the DB then a call
+            to the verifyNumber method is made
+         */
         phoneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,6 +99,12 @@ public class UserProfileActivity extends BaseActivity {
             }
         });
 
+        /*
+            Responsible for accepting the verification code sent by Firebase
+            Only shown once a user has successfully triggered the opt in option
+            If they've entered the verification code, makes a call to verifyPhoneNumberWithCode
+            If not, displays error message
+         */
         verifyCodeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,6 +118,10 @@ public class UserProfileActivity extends BaseActivity {
             }
         });
 
+        /*
+            Responsible for triggering email change which is nested inside sendVerificationEmail
+            Signs user out as they've opted to changed email
+         */
         emailBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,6 +130,13 @@ public class UserProfileActivity extends BaseActivity {
             }
         });
 
+        /*
+            Responsible for triggering password change
+            Makes a call to validatePasswordFields to ensure user has entered valid password
+            Makes a call to Firebase API, requesting to reauthenticate the user
+            On Success, makes another call to Firebase API, requesting to updatePassword
+            On Failure, displays message informing the user
+         */
         passwordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,6 +169,11 @@ public class UserProfileActivity extends BaseActivity {
             }
         });
 
+        /*
+            Responsible for allowing the user to toggle alerts on/off
+            If checked, makes a call to userInfo to setAlertStatus to true which updates in the DB
+            if not checked, makes a call to userInfo to setAlertStatus to false which updates in the DB
+         */
         alertTglBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -152,6 +187,12 @@ public class UserProfileActivity extends BaseActivity {
             }
         });
 
+        /*
+            Responsible for acting as callback to phone verification if requested by the user
+            On Success, makes a call to userInfo to setPhone to update phone number in DB
+            On Failure, displays message informing the user
+            On CodeSent, disables opt in views and enables verification views
+         */
         phoneCallback = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             @Override
             public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
@@ -178,6 +219,12 @@ public class UserProfileActivity extends BaseActivity {
         };
     }
 
+    /*
+        Responsible for validating the passwords entered by the user
+        Called from inside the password button onClickListener
+        If passwords match requirements, returns true and displays message
+        If password do not match requirements, return false and displays message
+     */
     public Boolean validatePasswordFields(String newPass, String repeatPass){
         Boolean valid = false;
         Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
@@ -199,6 +246,15 @@ public class UserProfileActivity extends BaseActivity {
         return valid;
     }
 
+    /*
+        Responsible for sending verification email is the user wishes to change their email
+        Called from inside the email button onClickListener
+        Makes a call to Firebase API, requesting to reauthenticate current user
+        On Success, makes another call to Firebase API to updateEmail
+        On Success of updateEmail, makes another call to Firebase API to sendVerificationEmail
+        On Success of this, signs the user out as they need to now verify their new email
+        On Failure of any, displays message informing the user
+     */
     public void sendVerificationEmail(final String email, String password){
         user = auth.getCurrentUser();
         AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), password);
@@ -235,11 +291,18 @@ public class UserProfileActivity extends BaseActivity {
         });
     }
 
+    /*
+        Responsible for sending verification sms from Firebase
+     */
     public void verifyNumber(){
         PhoneAuthProvider.getInstance().verifyPhoneNumber(phoneNumber, 60, TimeUnit.SECONDS, this, phoneCallback);
         auth.setLanguageCode("IE");
     }
 
+    /*
+        Responsible for checking if the verification code entered by the user is valid
+        Makes a call to onVerificationCompleted which saves the user phone number
+     */
     public void verifyPhoneNumberWithCode(String verificationId, String code){
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
         phoneCallback.onVerificationCompleted(credential);

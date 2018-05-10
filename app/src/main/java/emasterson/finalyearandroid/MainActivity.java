@@ -16,7 +16,13 @@ import com.google.android.gms.maps.model.PolygonOptions;
 
 import java.util.ArrayList;
 
+/*
+    This activity is responsible for showing the user the main view of the application
+    Contains a google map with real-time update of current location of watch
+    Displays already defined geofence zones
+ */
 public class MainActivity extends BaseActivity implements OnMapReadyCallback{
+    // Declaration of variables
     private Button geofenceBtn, extraInfoBtn;
     private Double latitude, longitude;
     private GoogleMap gMap;
@@ -24,6 +30,10 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback{
     private ArrayList<String> completeZoneColourList = new ArrayList<>();
     private UserInfo userInfo;
 
+    /*
+        Responsible for instantiating all objects required in the class
+        Responsible for setting onClickListener for Buttons
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +63,12 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback{
         mapFragment.getMapAsync(this);
     }
 
+    /*
+        Responsible for intialising the google map
+        Contains event listener for UserInfo, retrieves relevant data such as
+        current latitude/longitude and list of already defined zones
+        Updates map with information
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         gMap = googleMap;
@@ -82,6 +98,10 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback{
         });
     }
 
+    /*
+        Responsible for creating the polygons on the google map
+        Called from within the event listener if zones exist
+     */
     public void createPolygon(ArrayList<LatLng> zoneList, String zoneColour) {
         int fillColor = 0;
         if(zoneColour.equals("Green")){
