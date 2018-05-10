@@ -17,8 +17,14 @@ import com.google.firebase.messaging.RemoteMessage;
 import emasterson.finalyearandroid.MainActivity;
 import emasterson.finalyearandroid.R;
 
+/*
+    This class is responsible for receiving push notifications on the users device
+    Using notification builder, it listens for the notification payload coming in and displays on users device
+    Intent is defined to launch the MainActivity is the user opens the notification
+ */
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
-    @Override public void onMessageReceived(RemoteMessage remoteMessage) {
+    @Override
+    public void onMessageReceived(RemoteMessage remoteMessage) {
         String channelId = getString(R.string.default_notification_channel_id);
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 

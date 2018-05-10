@@ -30,6 +30,9 @@ import java.util.regex.Pattern;
     https://github.com/firebase/quickstart-android/tree/master/auth
     https://firebase.google.com/docs/auth/android/password-auth?authuser=0
  */
+/*
+    This activity is responsible for allowing users to sign up, login, reset password and resend verification emails
+ */
 public class LoginRegistrationActivity extends AppCompatActivity {
     // Declaration of variables
 
