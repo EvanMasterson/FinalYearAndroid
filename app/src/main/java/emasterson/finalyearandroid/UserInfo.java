@@ -26,7 +26,7 @@ public class UserInfo {
     private FirebaseAuth auth;
     private FirebaseDatabase database;
     private DatabaseReference dbRef;
-    private String phone, zoneColour;
+    private String phone, zoneColour, patientName, patientAge, patientAbout;
     private Double latitude, longitude, zoneLatitude, zoneLongitude;
     private ArrayList<ArrayList<LatLng>> completeZoneList = new ArrayList<>();
     private ArrayList<String> completeZoneColourList = new ArrayList<>();
@@ -61,6 +61,15 @@ public class UserInfo {
                     }
                     if(data.getKey().equals("phone")){
                         phone = data.getValue().toString();
+                    }
+                    if(data.getKey().equals("patient_name")){
+                        patientName = data.getValue().toString();
+                    }
+                    if(data.getKey().equals("patient_age")){
+                        patientAge = data.getValue().toString();
+                    }
+                    if(data.getKey().equals("patient_about")){
+                        patientAbout = data.getValue().toString();
                     }
                     if(data.getKey().equals("heart_rate")){
                         heartRateInfo = new JSONArray();
@@ -132,6 +141,18 @@ public class UserInfo {
         dbRef.child("notifications").setValue(status);
     }
 
+    public void setPatientName(String name){
+        dbRef.child("patient_name").setValue(name);
+    }
+
+    public void setPatientAge(String age){
+        dbRef.child("patient_age").setValue(age);
+    }
+
+    public void setPatientAbout(String about){
+        dbRef.child("patient_about").setValue(about);
+    }
+
     public FirebaseAuth getAuth(){
         return auth;
     }
@@ -158,5 +179,17 @@ public class UserInfo {
 
     public JSONArray getHeartRateInfo(){
         return heartRateInfo;
+    }
+
+    public String getPatientName(){
+        return patientName;
+    }
+
+    public String getPatientAge(){
+        return patientAge;
+    }
+
+    public String getPatientAbout(){
+        return patientAbout;
     }
 }
