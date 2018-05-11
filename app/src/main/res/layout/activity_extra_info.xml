@@ -7,59 +7,15 @@
     android:layout_height="match_parent"
     tools:context="emasterson.finalyearandroid.ExtraInfoActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:paddingTop="8dp"
-        android:text="Daily Vitals"
-        android:textAlignment="center"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/datePicker"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <DatePicker
-        android:id="@+id/datePicker"
-        android:layout_width="223dp"
-        android:layout_height="102dp"
-        android:calendarViewShown="false"
-        android:datePickerMode="spinner"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
-
     <com.androidplot.xy.XYPlot
         android:id="@+id/graph"
         style="@style/APDefacto.Light"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         ap:domainTitle="Time"
         ap:lineLabelRotationBottom="-45"
         ap:lineLabels="left|bottom"
         ap:rangeTitle="BPM"
-        ap:title="Heart Rate"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/datePicker" />
-
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/graph"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/datePicker"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        ap:title="Heart Rate" />
 
 </android.support.constraint.ConstraintLayout>

@@ -2,9 +2,6 @@ package emasterson.finalyearandroid;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
-import android.widget.Spinner;
 
 import com.androidplot.xy.CatmullRomInterpolator;
 import com.androidplot.xy.LineAndPointFormatter;
@@ -22,7 +19,6 @@ import java.text.Format;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 /*
@@ -48,17 +44,7 @@ public class ExtraInfoActivity extends BaseActivity {
         setContentView(R.layout.activity_extra_info);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        Spinner spinner = findViewById(R.id.spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.spinner, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
 
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(calendar.YEAR);
-        int month = calendar.get(calendar.MONTH);
-        int day = calendar.get(calendar.DAY_OF_MONTH);
-
-        DatePicker datePicker = findViewById(R.id.datePicker);
         plot = findViewById(R.id.graph);
         plot.setDomainStep(StepMode.INCREMENT_BY_VAL, 1);
 
@@ -88,13 +74,6 @@ public class ExtraInfoActivity extends BaseActivity {
                     }
                 }
                 updateGraph(heartRate, dateTime);
-            }
-        });
-
-        datePicker.init(year, month, day, new DatePicker.OnDateChangedListener() {
-            @Override
-            public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-
             }
         });
     }
