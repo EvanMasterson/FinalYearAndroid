@@ -21,13 +21,21 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
+/*
+    This activity is responsible for setting information about a patient
+ */
 public class PatientProfileActivity extends BaseActivity {
+    // Declaration of variables
     private Boolean input;
     private EditText nameET, ageET, aboutET;
     private ImageButton imageButton;
     private UserInfo userInfo;
     private FirebaseUser user;
 
+    /*
+        Responsible for instantiating all objects required in the class
+        Responsible for setting onClickListener for Buttons
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +84,10 @@ public class PatientProfileActivity extends BaseActivity {
         });
     }
 
+    /*
+        Responsible for checking the state of the edittext fields
+        Allows them to be toggled via FloatingActionButton
+     */
     public void inputState(Boolean state){
         if(state){
             nameET.setEnabled(true);
@@ -90,6 +102,10 @@ public class PatientProfileActivity extends BaseActivity {
         input = false;
     }
 
+    /*
+        Responsible for retrieving existing information about the patient
+        Called on creation of activity
+     */
     public void retrieveInfo(){
         userInfo.getUserData();
         userInfo.setEventListener(new UserInfoListener() {
@@ -102,12 +118,20 @@ public class PatientProfileActivity extends BaseActivity {
         });
     }
 
+    /*
+        Responsible for updating any information about the patient
+        Called on FloatingActionButton click when toggling input fields
+     */
     public void updateInfo(String name, String age, String about){
         userInfo.setPatientName(name);
         userInfo.setPatientAge(age);
         userInfo.setPatientAbout(about);
     }
 
+    /*
+        Responsible for receiving the result of the intent passed in the ImageButton onClick
+        Sets the image on the ImageButton to uri of image chosen from gallery
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
@@ -118,9 +142,12 @@ public class PatientProfileActivity extends BaseActivity {
         }
     }
 
+    /*
+        Responsible for updating and storing picture associated with the patient
+        Creates a UserProfileChangeRequest as part of Firebase API to set the photoUri
+     */
     public void updatePicture(Uri uri){
         UserProfileChangeRequest profile = new UserProfileChangeRequest.Builder().setPhotoUri(uri).build();
-        System.out.println(uri);
         user.updateProfile(profile).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -129,6 +156,10 @@ public class PatientProfileActivity extends BaseActivity {
         });
     }
 
+    /*
+        Responsible for checking permission for READ_EXTERNAL_STORAGE
+        If not permitted, user is prompted to allow permissions so they can choose/set patient photo
+     */
     public boolean checkPermissions(){
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
@@ -143,6 +174,10 @@ public class PatientProfileActivity extends BaseActivity {
         }
     }
 
+    /*
+        Responsible for result of checkPermissions method
+        If the user is prompted to enter permissions and accepts, then activity is reloaded and they can choose photo
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
