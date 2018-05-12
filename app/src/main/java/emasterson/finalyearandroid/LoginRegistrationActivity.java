@@ -110,7 +110,7 @@ public class LoginRegistrationActivity extends AppCompatActivity {
         On Failure, displays message, confirms user as being null
      */
     public void signIn(String email, String password) {
-        if (!validateEmail(email) && !validatePassword(password)) {
+        if (!validateEmail(email) || !validatePassword(password)) {
             return;
         }
         showProgressDialog();
@@ -137,7 +137,7 @@ public class LoginRegistrationActivity extends AppCompatActivity {
         On Failure, displays message, confirms user as being null
      */
     private void createAccount(final String email, String password) {
-        if (!validateEmail(email) && !validatePassword(password)) {
+        if (!validateEmail(email) || !validatePassword(password)) {
             return;
         }
         showProgressDialog();
@@ -177,8 +177,6 @@ public class LoginRegistrationActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
                         auth.signOut();
-                        Intent logoutIntent = new Intent(getApplicationContext(), LoginRegistrationActivity.class);
-                        startActivity(logoutIntent);
                         Toast.makeText(getApplicationContext(), "Verification Email sent...", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getApplicationContext(), "Unable to send email", Toast.LENGTH_SHORT).show();
@@ -213,6 +211,10 @@ public class LoginRegistrationActivity extends AppCompatActivity {
         On Failure, displays message email does not exist
      */
     private void resetPassword(final String email){
+        if(email == null){
+            emailET.setError("Required.");
+            return;
+        }
         showProgressDialog();
 
         auth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
