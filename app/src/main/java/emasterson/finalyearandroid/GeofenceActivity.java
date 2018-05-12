@@ -181,7 +181,6 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
      */
     @Override
     public void onPolygonClick(final Polygon polygon) {
-        System.out.println("Clicked");
         view.setVisibility(View.VISIBLE);
 
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -191,7 +190,6 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
         alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-//                view.setVisibility(View.INVISIBLE);
                 ((ViewGroup) view.getParent()).removeView(view);
                 dialog.dismiss();
                 savePolygon(zoneColour);

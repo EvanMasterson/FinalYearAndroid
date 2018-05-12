@@ -32,6 +32,7 @@
     <string name="verifyCodeHint">Enter Verification Code</string>
     <string name="verifyCodeBtn">Verify</string>
     <string name="alertTV">Receive Notification Alerts?</string>
+    <string name="changeEmailHint">Enter new email here</string>
     <string-array name="zone">
         <item>Green</item>
         <item>Yellow</item>

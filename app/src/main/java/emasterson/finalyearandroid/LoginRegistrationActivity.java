@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -110,9 +109,6 @@ public class LoginRegistrationActivity extends AppCompatActivity {
         On Failure, displays message, confirms user as being null
      */
     public void signIn(String email, String password) {
-        if (!validateEmail(email) || !validatePassword(password)) {
-            return;
-        }
         showProgressDialog();
 
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -136,7 +132,7 @@ public class LoginRegistrationActivity extends AppCompatActivity {
         On Success, makes a call to sendVerificationEmail, gets user object and sets default info in DB
         On Failure, displays message, confirms user as being null
      */
-    private void createAccount(final String email, String password) {
+    private void createAccount(String email, String password) {
         if (!validateEmail(email) || !validatePassword(password)) {
             return;
         }
@@ -150,7 +146,6 @@ public class LoginRegistrationActivity extends AppCompatActivity {
                     user = auth.getCurrentUser();
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference dbRef = database.getReference().child(user.getUid());
-                    dbRef.child("email").setValue(email);
                     dbRef.child("notifications").setValue(true);
                 } else {
                     Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();

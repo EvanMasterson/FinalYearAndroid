@@ -151,7 +151,11 @@ public class PatientProfileActivity extends BaseActivity {
         user.updateProfile(profile).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                Toast.makeText(getApplicationContext(), "Updated patient image", Toast.LENGTH_LONG).show();
+                if(task.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), "Updated patient image", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Unable to update patient image", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }

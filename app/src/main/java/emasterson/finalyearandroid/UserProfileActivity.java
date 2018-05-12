@@ -126,46 +126,17 @@ public class UserProfileActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 sendVerificationEmail(emailET.getText().toString(), passwordET.getText().toString());
-                auth.signOut();
             }
         });
 
         /*
             Responsible for triggering password change
-            Makes a call to validatePasswordFields to ensure user has entered valid password
-            Makes a call to Firebase API, requesting to reauthenticate the user
-            On Success, makes another call to Firebase API, requesting to updatePassword
-            On Failure, displays message informing the user
+            Makes a call to changePassword which contains the implementation
          */
         passwordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(validatePasswordFields(newPasswordET.getText().toString(), repeatPasswordET.getText().toString())) {
-                    user = userInfo.getAuth().getCurrentUser();
-                    AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), currentPasswordET.getText().toString());
-                    user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-                                user.updatePassword(newPasswordET.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if(task.isSuccessful()){
-                                            currentPasswordET.setText(null);
-                                            newPasswordET.setText(null);
-                                            repeatPasswordET.setText(null);
-                                            Toast.makeText(getApplicationContext(), "Password has been changed.", Toast.LENGTH_LONG).show();
-                                        } else {
-                                            Toast.makeText(getApplicationContext(), "Error changing password.", Toast.LENGTH_LONG).show();
-                                        }
-                                    }
-                                });
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Error authenticating user", Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    });
-                }
+                changePassword();
             }
         });
 
@@ -217,6 +188,41 @@ public class UserProfileActivity extends BaseActivity {
                 verifyCodeBtn.setVisibility(View.VISIBLE);
             }
         };
+    }
+
+    /*
+        Responsible for triggering password change
+        Makes a call to validatePasswordFields to ensure user has entered valid password
+        Makes a call to Firebase API, requesting to reauthenticate the user
+        On Success, makes another call to Firebase API, requesting to updatePassword
+        On Failure, displays message informing the user
+     */
+    public void changePassword(){
+        if(validatePasswordFields(newPasswordET.getText().toString(), repeatPasswordET.getText().toString())) {
+            user = userInfo.getAuth().getCurrentUser();
+            AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), currentPasswordET.getText().toString());
+            user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()){
+                        user.updatePassword(newPasswordET.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    finish();
+                                    startActivity(getIntent());
+                                    Toast.makeText(getApplicationContext(), "Password has been changed.", Toast.LENGTH_LONG).show();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Error changing password.", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Error authenticating user", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+        }
     }
 
     /*
