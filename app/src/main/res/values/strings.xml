@@ -32,23 +32,9 @@
     <string name="verifyCodeHint">Enter Verification Code</string>
     <string name="verifyCodeBtn">Verify</string>
     <string name="alertTV">Receive Notification Alerts?</string>
-    <string-array name="spinner">
-        <item>Heart Rate</item>
-        <item>Steps</item>
-        <item>Sleep</item>
-    </string-array>
     <string-array name="zone">
         <item>Green</item>
         <item>Yellow</item>
         <item>Red</item>
-    </string-array>
-    <string-array name="days">
-        <item>Monday</item>
-        <item>Tuesday</item>
-        <item>Wednesday</item>
-        <item>Thursday</item>
-        <item>Friday</item>
-        <item>Saturday</item>
-        <item>Sunday</item>
     </string-array>
 </resources>
