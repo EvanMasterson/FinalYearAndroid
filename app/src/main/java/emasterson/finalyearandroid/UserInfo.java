@@ -14,7 +14,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
+import java.util.List;
 
 /*
     This class is responsible for retrieving all the information associated with a user from Firebase DB
@@ -126,11 +128,47 @@ public class UserInfo {
         or push new data to the DB such as adding a new geofence zone
      */
     // Push zone list to db, and add zone colour to end of list in db
-    public void addZone(ArrayList<LatLng> zone, String zoneColour){
-        String size = String.valueOf(zone.size());
-        String key = dbRef.child("zones").push().getKey();
-        dbRef.child("zones").child(key).setValue(zone);
-        dbRef.child("zones").child(key).child(size).child("colour").setValue(zoneColour);
+    public void addZone(final List<LatLng> zone, final String zoneColour){
+        if(completeZoneList.contains(zone)){
+            dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for(DataSnapshot data : dataSnapshot.getChildren()){
+                        if(data.getKey().equals("zones")) {
+                            for(DataSnapshot zones : data.getChildren()){
+                                ArrayList<LatLng> listGeofencePoints = new ArrayList<>();
+                                try {
+                                    JSONArray jsonArray = new JSONArray(zones.getValue().toString());
+                                    for(int i=0; i<jsonArray.length()-1; i++){
+                                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                        zoneLatitude = Double.parseDouble(jsonObject.getString("latitude"));
+                                        zoneLongitude = Double.parseDouble(jsonObject.getString("longitude"));
+                                        LatLng point = new LatLng(zoneLatitude, zoneLongitude);
+                                        listGeofencePoints.add(point);
+                                    }
+                                    if(listGeofencePoints.equals(zone)){
+                                        dbRef.child("zones").child(zones.getKey()).setValue(zone);
+                                        dbRef.child("zones").child(zones.getKey()).child(String.valueOf(zone.size())).child("colour").setValue(zoneColour);
+                                    }
+                                } catch(Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        } else {
+            String size = String.valueOf(zone.size());
+            String key = dbRef.child("zones").push().getKey();
+            dbRef.child("zones").child(key).setValue(zone);
+            dbRef.child("zones").child(key).child(size).child("colour").setValue(zoneColour);
+        }
     }
 
     public void setPhone(String phone){

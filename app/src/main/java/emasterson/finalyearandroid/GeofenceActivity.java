@@ -25,6 +25,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /*
     This activity is resonsible for allowing the user to create, update and delete geofence zones
@@ -167,7 +168,8 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
         On cancellation, returns user back to view
      */
     @Override
-    public void onPolygonClick(final Polygon polygon) {
+    public void onPolygonClick(Polygon polygon) {
+        final List<LatLng> listPoints = polygon.getPoints().subList(0, polygon.getPoints().size()-1);
         view.setVisibility(View.VISIBLE);
 
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -179,7 +181,7 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
             public void onClick(DialogInterface dialog, int which) {
                 ((ViewGroup) view.getParent()).removeView(view);
                 dialog.dismiss();
-                savePolygon(zoneColour);
+                savePolygon(listPoints, zoneColour);
             }
         });
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -240,8 +242,8 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
     /*
         Responsible for saving desired polygon and pushing its information to Firebase DB
      */
-    public void savePolygon(String zoneColour){
-        userInfo.addZone(listGeofencePoints, zoneColour);
+    public void savePolygon(List<LatLng> listPoints, String zoneColour){
+        userInfo.addZone(listPoints, zoneColour);
         finish();
         startActivity(getIntent());
     }
