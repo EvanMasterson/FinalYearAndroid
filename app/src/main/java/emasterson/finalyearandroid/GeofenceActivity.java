@@ -38,8 +38,7 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
     // Declaration of variables
     private Double latitude, longitude;
     private GoogleMap gMap;
-    private LatLng point, previousPoint;
-    private Polyline polyline;
+    private LatLng point;
     private Polygon polygon;
     private ArrayList<LatLng> listGeofencePoints = new ArrayList<>();
     private ArrayList<ArrayList<LatLng>> completeZoneList = new ArrayList<>();
@@ -135,21 +134,7 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
         listGeofencePoints.add(point);
         gMap.addMarker(new MarkerOptions().position(point).title(point.toString()));
 
-        if(listGeofencePoints.size() > 1){
-            PolylineOptions polylineOptions = new PolylineOptions().color(Color.BLUE);
-            polylineOptions.add(point);
-            previousPoint = listGeofencePoints.get(listGeofencePoints.size() - 2);
-            polylineOptions.add(previousPoint);
-            polyline = gMap.addPolyline(polylineOptions);
-            polylineList.add(polyline);
-
-            if(listGeofencePoints.size() > 2){
-                polylineOptions.add(listGeofencePoints.get(0));
-                polyline = gMap.addPolyline(polylineOptions);
-                polylineList.add(polyline);
-                createPolygon(listGeofencePoints, "Green");
-            }
-        }
+        reDrawPolylines();
         Toast.makeText(getApplicationContext(), "Click marker's to remove", Toast.LENGTH_SHORT).show();
     }
 
@@ -162,7 +147,9 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
         for(int i=0; i<listGeofencePoints.size(); i++){
             if(listGeofencePoints.get(i).equals(marker.getPosition())){
                 for(Polygon polygon : polygonList){
-                    polygon.remove();
+                    if(polygon.getPoints().contains(marker.getPosition())) {
+                        polygon.remove();
+                    }
                 }
                 listGeofencePoints.remove(i);
                 marker.remove();
@@ -206,11 +193,12 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     /*
-        Responsible for drawing the polylines of a geofence
-        This occures if the user wants to modify geofence
+        Responsible for drawing the polylines of a geofence and making a call to createPolygon
+        Clears any polylines that exist first before replotting them
      */
     public void reDrawPolylines(){
         PolylineOptions polylineOptions = new PolylineOptions().color(Color.BLUE);
+        Polyline polyline;
 
         for(Polyline line : polylineList){
             line.remove();
@@ -220,6 +208,9 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
             polylineOptions.add(listGeofencePoints.get(i));
             polyline = gMap.addPolyline(polylineOptions);
             polylineList.add(polyline);
+        }
+        if(listGeofencePoints.size() > 2){
+            createPolygon(listGeofencePoints, "Green");
         }
     }
 
