@@ -191,6 +191,14 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
                 dialog.dismiss();
             }
         });
+        alert.setNeutralButton("Delete", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ((ViewGroup) view.getParent()).removeView(view);
+                dialog.dismiss();
+                deleteZone(listPoints);
+            }
+        });
         alert.show();
     }
 
@@ -244,6 +252,12 @@ public class GeofenceActivity extends BaseActivity implements OnMapReadyCallback
      */
     public void savePolygon(List<LatLng> listPoints, String zoneColour){
         userInfo.addZone(listPoints, zoneColour);
+        finish();
+        startActivity(getIntent());
+    }
+
+    public void deleteZone(List<LatLng> listPoints){
+        userInfo.deleteZone(listPoints);
         finish();
         startActivity(getIntent());
     }
