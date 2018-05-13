@@ -2,6 +2,7 @@ package emasterson.finalyearandroid;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.androidplot.xy.CatmullRomInterpolator;
 import com.androidplot.xy.LineAndPointFormatter;
@@ -60,20 +61,23 @@ public class ExtraInfoActivity extends BaseActivity {
                 heartRateInfo = userInfo.getHeartRateInfo();
                 ArrayList<Integer> heartRate = new ArrayList<>();
                 ArrayList<Date> dateTime = new ArrayList<>();
-                for(int i=0; i<heartRateInfo.length(); i++){
-                    try {
-                        int hr = Integer.valueOf(heartRateInfo.getJSONObject(i).getString("heart_rate"));
-                        String dt = heartRateInfo.getJSONObject(i).getString("date_time");
-                        long epoch = Long.parseLong(dt);
-                        Date date = new Date(epoch*1000);
+                if(!heartRate.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "No data recorded.", Toast.LENGTH_SHORT).show();
+                    for (int i = 0; i < heartRateInfo.length(); i++) {
+                        try {
+                            int hr = Integer.valueOf(heartRateInfo.getJSONObject(i).getString("heart_rate"));
+                            String dt = heartRateInfo.getJSONObject(i).getString("date_time");
+                            long epoch = Long.parseLong(dt);
+                            Date date = new Date(epoch * 1000);
 
-                        heartRate.add(hr);
-                        dateTime.add(date);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                            heartRate.add(hr);
+                            dateTime.add(date);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
+                    updateGraph(heartRate, dateTime);
                 }
-                updateGraph(heartRate, dateTime);
             }
         });
     }
