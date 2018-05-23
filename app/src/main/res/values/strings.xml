@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FinalYearAndroid</string>
+    <string name="app_name">Geofence Monitor</string>
     <string name="title_login">Login</string>
     <string name="title_home">Home</string>
     <string name="title_profile">User Profile</string>

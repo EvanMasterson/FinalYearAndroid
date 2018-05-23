@@ -47,7 +47,7 @@ public class ExtraInfoActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         plot = findViewById(R.id.graph);
-        plot.setDomainStep(StepMode.INCREMENT_BY_VAL, 1);
+        plot.setDomainStep(StepMode.INCREMENT_BY_VAL, 2);
 
         userInfo = new UserInfo();
         userInfo.getUserData();
@@ -61,8 +61,7 @@ public class ExtraInfoActivity extends BaseActivity {
                 heartRateInfo = userInfo.getHeartRateInfo();
                 ArrayList<Integer> heartRate = new ArrayList<>();
                 ArrayList<Date> dateTime = new ArrayList<>();
-                if(!heartRate.isEmpty()) {
-                    Toast.makeText(getApplicationContext(), "No data recorded.", Toast.LENGTH_SHORT).show();
+                if(heartRateInfo != null) {
                     for (int i = 0; i < heartRateInfo.length(); i++) {
                         try {
                             int hr = Integer.valueOf(heartRateInfo.getJSONObject(i).getString("heart_rate"));
@@ -76,7 +75,26 @@ public class ExtraInfoActivity extends BaseActivity {
                             e.printStackTrace();
                         }
                     }
+                    if(heartRate.size() >= 2880){
+                        plot.setDomainStep(StepMode.INCREMENT_BY_VAL, 240);
+                    } else if(heartRate.size() >= 1440){
+                        plot.setDomainStep(StepMode.INCREMENT_BY_VAL, 120);
+                    } else if(heartRate.size() >= 720){
+                        plot.setDomainStep(StepMode.INCREMENT_BY_VAL, 60);
+                    } else if(heartRate.size() >= 360){
+                        plot.setDomainStep(StepMode.INCREMENT_BY_VAL, 30);
+                    } else if(heartRate.size() >= 180){
+                        plot.setDomainStep(StepMode.INCREMENT_BY_VAL, 15);
+                    } else if(heartRate.size() >= 90){
+                        plot.setDomainStep(StepMode.INCREMENT_BY_VAL, 8);
+                    } else if(heartRate.size() >= 45){
+                        plot.setDomainStep(StepMode.INCREMENT_BY_VAL, 4);
+                    } else {
+                        plot.setDomainStep(StepMode.INCREMENT_BY_VAL, 2);
+                    }
                     updateGraph(heartRate, dateTime);
+                } else {
+                    Toast.makeText(getApplicationContext(), "No data recorded.", Toast.LENGTH_SHORT).show();
                 }
             }
         });

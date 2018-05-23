@@ -109,6 +109,10 @@ public class LoginRegistrationActivity extends AppCompatActivity {
         On Failure, displays message, confirms user as being null
      */
     public void signIn(String email, String password) {
+        if(emailET.getText().toString().isEmpty() || passwordET.getText().toString().isEmpty()){
+            Toast.makeText(getApplicationContext(), "Email or Password cannot be empty.", Toast.LENGTH_SHORT).show();
+            return;
+        }
         showProgressDialog();
 
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -206,7 +210,7 @@ public class LoginRegistrationActivity extends AppCompatActivity {
         On Failure, displays message email does not exist
      */
     private void resetPassword(final String email){
-        if(email == null){
+        if(email.isEmpty()){
             emailET.setError("Required.");
             return;
         }

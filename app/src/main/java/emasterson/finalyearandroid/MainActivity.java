@@ -89,7 +89,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback{
                     gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(watch, 16.0f));
                 }
 
-                if(!completeZoneList.isEmpty() && !completeZoneColourList.isEmpty() &&(completeZoneList.size()==completeZoneColourList.size())){
+                if(completeZoneList != null && completeZoneColourList != null &&(completeZoneList.size()==completeZoneColourList.size())){
                     for(int i=0; i<completeZoneList.size(); i++){
                         createPolygon(completeZoneList.get(i), completeZoneColourList.get(i));
                     }
