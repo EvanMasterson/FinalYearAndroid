@@ -164,12 +164,12 @@ public class UserInfo {
 
                     }
                 });
+            } else {
+                String size = String.valueOf(zone.size());
+                String key = dbRef.child("zones").push().getKey();
+                dbRef.child("zones").child(key).setValue(zone);
+                dbRef.child("zones").child(key).child(size).child("colour").setValue(zoneColour);
             }
-        } else {
-            String size = String.valueOf(zone.size());
-            String key = dbRef.child("zones").push().getKey();
-            dbRef.child("zones").child(key).setValue(zone);
-            dbRef.child("zones").child(key).child(size).child("colour").setValue(zoneColour);
         }
     }
 
